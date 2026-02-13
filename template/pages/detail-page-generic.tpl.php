@@ -1,5 +1,7 @@
-<?php $this->brick('header'); ?>
+<?php $this->brick('modern-header'); ?>
 
+    <main>
+        <div class="container">
     <div class="main" id="main">
         <div class="main-precontents" id="main-precontents"></div>
         <div class="main-contents" id="main-contents">
@@ -110,5 +112,10 @@ endif;
             <div class="clear"></div>
         </div><!-- main-contents -->
     </div><!-- main -->
+        </div>
+    </main>
 
-<?php $this->brick('footer'); ?>
+<?php $this->brick('modern-footer'); ?>
+
+<script src="<?=Cfg::get('STATIC_URL'); ?>/js/modern-ui.js"></script>
+<script src="<?=Cfg::get('STATIC_URL'); ?>/js/performance.js"></script>
