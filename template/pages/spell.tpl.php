@@ -1,8 +1,10 @@
-<?php $this->brick('header'); ?>
+<?php $this->brick('modern-header'); ?>
 
-    <div class="main" id="main">
-        <div class="main-precontents" id="main-precontents"></div>
-        <div class="main-contents" id="main-contents">
+    <main>
+        <div class="container">
+            <div class="main" id="main">
+                <div class="main-precontents" id="main-precontents"></div>
+                <div class="main-contents" id="main-contents">
 
 <?php
     $this->brick('announcement');
@@ -301,7 +303,9 @@ $this->brick('lvTabs', ['relTabs' => true]);
 $this->brick('contribute');
 ?>
             <div class="clear"></div>
-        </div><!-- main-contents -->
-    </div><!-- main -->
+                </div><!-- main-contents -->
+            </div><!-- main -->
+        </div>
+    </main>
 
-<?php $this->brick('footer'); ?>
+<?php $this->brick('modern-footer'); ?>
