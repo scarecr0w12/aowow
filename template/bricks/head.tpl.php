@@ -25,6 +25,10 @@ if ($this->gDataKey):
 endif;
 ?>
     </script>
+    <!-- Load old JavaScript files first -->
+    <script type="text/javascript" src="<?=Cfg::get('STATIC_URL'); ?>/js/jquery-3.7.0.min.js"></script>
+    <script type="text/javascript" src="<?=Cfg::get('STATIC_URL'); ?>/js/global.js"></script>
+    <script type="text/javascript" src="<?=Cfg::get('STATIC_URL'); ?>/js/basic.js"></script>
 <?php
 foreach ($this->js as [$type, $js]):
     if ($type == SC_JS_FILE):
