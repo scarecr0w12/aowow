@@ -31,7 +31,7 @@ endif;
     <div id="noscript-text"><?=Lang::main('noJScript'); ?></div>
 </noscript>
 
-<script type="text/javascript">DomContentLoaded.now()</script>
+<script type="text/javascript">if (typeof DomContentLoaded !== 'undefined') { DomContentLoaded.now(); }</script>
 <?php
 if (Cfg::get('DEBUG') >= CLI::LOG_INFO && User::isInGroup(U_GROUP_DEV | U_GROUP_ADMIN)):
 ?>
