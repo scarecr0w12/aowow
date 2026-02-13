@@ -33,10 +33,10 @@
                 </nav>
 
                 <div class="header-user">
-                    <?php if (User::isLogged()): ?>
+                    <?php if (User::$id): ?>
                         <div class="header-user-menu">
                             <button class="header-user-menu-toggle">
-                                <span><?=User::getName(); ?></span>
+                                <span><?=User::$displayName; ?></span>
                             </button>
                             <div class="header-user-menu-dropdown">
                                 <a href="?account" class="header-user-menu-item">Account</a>
@@ -196,7 +196,7 @@
                 <h2 class="home-cta-title">Start Your Adventure</h2>
                 <p class="home-cta-description">Join our community and contribute to the most comprehensive WoW database for Old Man Warcraft.</p>
                 <div class="home-cta-buttons">
-                    <?php if (!User::isLogged()): ?>
+                    <?php if (!User::$id): ?>
                         <a href="?account" class="btn btn-accent">Create Account</a>
                         <a href="?account" class="btn btn-outline">Sign In</a>
                     <?php else: ?>

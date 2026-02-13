@@ -1,7 +1,0 @@
-
-04:15:06  [OK]    profiler queue started
-04:15:06          sleeping 3.00s..
-04:15:09          fetching char Moonzico (#501) from realm #1
-04:15:09          char did not log in since last update. skipping...
-04:15:09          sleeping 3.00s..
-04:15:12  [INFO]  profiler queue empty - process halted!
