@@ -81,7 +81,10 @@ main {
   padding: var(--spacing-8) 0 !important;
   margin: 0 !important;
   width: 100% !important;
-  display: block !important;
+  display: grid !important;
+  grid-template-columns: 1fr 350px !important;
+  gap: var(--spacing-8) !important;
+  align-items: start !important;
 }
 
 .main-contents {
@@ -91,28 +94,51 @@ main {
   width: 100% !important;
   display: block !important;
   clear: both !important;
+  grid-column: 1 / -1 !important;
 }
 
 .main-precontents {
   display: none !important;
 }
 
-/* Fix layout for detail pages */
+/* Fix layout for detail pages - make text content main column */
 .main > .text {
   display: block !important;
   width: 100% !important;
   float: none !important;
   clear: both !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-/* Hide old sidebar elements */
-.main > div:not(.text),
-.main > .lvTabs,
-.main > .contribute {
-  display: block !important;
+/* Infobox goes to sidebar */
+.main > .infobox {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  width: 100% !important;
+  float: none !important;
+  margin: 0 !important;
+  padding: var(--spacing-6) !important;
+}
+
+/* lvTabs spans full width below */
+.main > .lvTabs {
+  grid-column: 1 / -1 !important;
   width: 100% !important;
   float: none !important;
   clear: both !important;
+  margin-top: var(--spacing-8) !important;
+}
+
+/* Contribute spans full width */
+.main > .contribute {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  float: none !important;
+  clear: both !important;
+  margin-top: var(--spacing-8) !important;
 }
 
 /* Style text content area */
