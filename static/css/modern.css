@@ -34,25 +34,80 @@
    AOWOW-SPECIFIC OVERRIDES & ENHANCEMENTS
    ============================================ */
 
+/* Override old styles with !important */
+* {
+  box-sizing: border-box !important;
+}
+
+html, body {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text) !important;
+  font-family: var(--font-family-base) !important;
+}
+
 /* Page wrapper */
 body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--color-bg) !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 main {
-  flex: 1;
+  flex: 1 !important;
+}
+
+/* Hide old layout elements */
+.toplinks,
+.footer,
+.home-wrapper,
+.home-logo,
+.home-search,
+.home-menu,
+.home-oneliner,
+.home-featuredbox,
+.pad,
+.pad2,
+.pad3 {
+  display: none !important;
+}
+
+/* Override old main content styles */
+.main {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.main-contents {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.main-precontents {
+  display: none !important;
+}
+
+/* Container styling */
+.container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 var(--spacing-4) !important;
+  width: 100% !important;
 }
 
 /* Header styling */
 header {
-  background-color: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
-  position: sticky;
-  top: 0;
-  z-index: var(--z-sticky);
-  box-shadow: var(--shadow-sm);
+  background-color: var(--color-bg-secondary) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: var(--z-sticky) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 header .container {

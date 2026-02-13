@@ -4,8 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="SHORTCUT ICON" href="<?=Cfg::get('STATIC_URL'); ?>/images/logos/favicon.ico" />
     <link rel="search" type="application/opensearchdescription+xml" href="<?=Cfg::get('STATIC_URL'); ?>/download/searchplugins/aowow.xml" title="Aowow" />
-    <!-- Modern CSS Framework -->
-    <link rel="stylesheet" type="text/css" href="<?=Cfg::get('STATIC_URL'); ?>/css/modern.css" />
 <?php
 foreach ($this->css as [$type, $css]):
     if ($type == SC_CSS_FILE):
@@ -15,6 +13,8 @@ foreach ($this->css as [$type, $css]):
     endif;
 endforeach;
 ?>
+    <!-- Modern CSS Framework (loaded last to override old styles) -->
+    <link rel="stylesheet" type="text/css" href="<?=Cfg::get('STATIC_URL'); ?>/css/modern.css" />
     <script type="text/javascript">
         var g_serverTime = new Date('<?=date(Util::$dateFormatInternal); ?>');
         var g_staticUrl = "<?=Cfg::get('STATIC_URL'); ?>";
