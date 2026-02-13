@@ -559,6 +559,15 @@ class CLISetup
             }
         }
 
+        // fallback: allow non-localized resources directly under setup/mpqdata/Interface/
+        // (e.g. setup/mpqdata/interface/icons/...) when no locale-specific match is present
+        if (!$result)
+        {
+            $path = sprintf($pathPattern, '');
+            if (self::fileExists($path))
+                $result[0] = $path;
+        }
+
         if (!$matchAll && !$result)
             $status = false;
 
@@ -595,7 +604,7 @@ class CLISetup
         if ($missing = array_diff_key(self::$locales, self::$gsFiles))
         {
             ClI::write('GlobalStrings.lua not found for locale '. Lang::concat($missing, callback: fn($x) => $x->name), CLI::LOG_WARN);
-            return false;
+            return count(self::$gsFiles) > 0;
         }
 
         return true;

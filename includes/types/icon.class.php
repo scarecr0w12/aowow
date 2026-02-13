@@ -114,7 +114,7 @@ class IconListFilter extends Filter
     //    8 => '',                                          // garrisonbuildings [num]
           9 => '?_pet',                                     // hunterpets [num]
     //   10 => '',                                          // garrisonmissionthreats [num]
-         11 => '',                                          // classes [num]
+         11 => '?_itemset',                                 // classes [num] - filter by class compatibility
          13 => ''                                           // used [num]
     );
     private $totalUses       = [];
@@ -125,7 +125,7 @@ class IconListFilter extends Filter
          3 => [parent::CR_CALLBACK, 'cbUseAny'  ],          // achievements [num]
          6 => [parent::CR_CALLBACK, 'cbUseAny'  ],          // currencies [num]
          9 => [parent::CR_CALLBACK, 'cbUseAny'  ],          // hunterpets [num]
-        11 => [parent::CR_NYI_PH,   null,      0],          // classes [num]
+        11 => [parent::CR_NUMERIC,  'classMask', NUM_CAST_INT, false],  // classes [num] - filter by class compatibility
         13 => [parent::CR_CALLBACK, 'cbUseAll'  ]           // used [num]
     );
 

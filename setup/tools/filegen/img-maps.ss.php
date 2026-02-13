@@ -141,99 +141,103 @@ CLISetup::registerSetup("build", new class extends SetupScript
 
     private function buildMapsFUTURE() : void
     {
+        /*
         $sumFloors = array_sum(array_column($this->dmFloorData, 1));
         $sumAreas  = count($this->wmAreas);
         $sumMaps   = count(CLISetup::$locales) * ($sumAreas + $sumFloors);
 
         CLI::write('[img-maps] Processing '.$sumAreas.' zone maps and '.$sumFloors.' dungeon maps from Interface/WorldMap/ for locale: '.Lang::concat(CLISetup::$locales, callback: fn($x) => $x->name));
 
-        /*  todo: retrain brain and generate maps by given files and GlobalStrings. Then assign dbc data to them not the other way round like it is now.
-                foreach ($this->mapFiles as $name => [$floors, $isMultilevel])
+        // Map Generation Algorithm
+        // Current approach: Assign DBC data to map files
+        // Future enhancement: Generate maps from files/GlobalStrings first, then assign DBC data
+        // This would provide better control over map generation and allow for manual overrides
+        
+        // Process map files and generate zone/dungeon maps
+        foreach ($this->mapFiles as $name => [$floors, $isMultilevel])
+        {
+            // skip redundant data of a microDungeons
+            if (in_array($name, $this->microDungeons))
+                continue;
+
+            $this->wmAreas = $this->wmAreas[$name] ?? [];
+            if (!$this->wmAreas)
+            {
+                CLI::write('[img-maps] no WMA data for map file '.CLI::bold($name), CLI::LOG_WARN);
+                continue;
+            }
+
+            $wmaId  = $this->wmAreas['id'];
+            $zoneId = $this->wmAreas['areaId'];
+            $mapId  = $this->wmAreas['mapId'];
+            $flags  = $this->wmAreas['flags'] ?? 0;                   // flags added in 4.x
+
+            if ($isMultilevel)
+                $this->multiLevelZones[$zoneId] = [];
+
+            // Special case: Ahn'Kahet (4494) has a secondary map file not referenced in DungeonMap.dbc
+            // This secondary map looks good and should be manually referenced for better coverage
+            if ($zoneId == 4494 && isset($floors[1]))
+            {
+                // TODO: Manually add secondary map reference for Ahn'Kahet
+                // $floorData[4494][1] = 2;
+            }
+
+            foreach ($floors as $locId => [$floorData, $basePath])
+            {
+                ksort($floorData);
+
+                $resOverlay = null;
+                if (!$isMultilevel)
+                    $resOverlay = $this->generateOverlay($wmaId, $name, $basePath);
+
+                // create spawn-maps if wanted
+                if ($resOverlay && $this->modeMask & self::M_SPAWNS)
                 {
-                    // skip redundant data of a microDungeons
-                    if (in_array($name, $this->microDungeons))
-                        continue;
+                    $outFile = $this->genSteps[self::M_SPAWNS][self::GEN_IDX_DEST_INFO][0][0] . $zoneId . '.png';
+                    if (!$this->buildSpawnMap($resOverlay, $outFile))
+                        $this->success = false;
+                }
 
-                    $this->wmAreas = $this->wmAreas[$name] ?? [];
-                    if (!$this->wmAreas)
+                foreach ($floorData as $floorIdx => $tileData)
+                {
+                    $outFile = $zoneId;
+
+                    // naming of the base floor file is a bit wonky. unsure when the -0 suffix should be implicit or explicit
+                    // just note, that the floor names from GlobalStrings.lua always have a '0' as base level suffix
+
+                    if (!$floorIdx && $isMultilevel && !($flags & self::AREA_FLAG_DEFAULT_FLOOR_TERRAIN))
+                        CLI::write('[img-maps] zone '.$name.' is multilevel and has base level map file, but is not flagged for use', CLI::LOG_INFO);
+
+                    if ($isMultilevel && !$floorIdx)
                     {
-                        CLI::write('[img-maps] no WMA data for map file '.CLI::bold($name), CLI::LOG_WARN);
-                        continue;
+                        if (in_array($mapId, self::CONTINENTS))
+                            $outFile .= '-0';
+                        else if ($this->wmAreas['defaultDungeonMapId'] < 0)
+                            $outFile .= '-0';
+                        // else
+                            // implicit -0
                     }
-
-                    $wmaId  = $this->wmAreas['id'];
-                    $zoneId = $this->wmAreas['areaId'];
-                    $mapId  = $this->wmAreas['mapId'];
-                    $flags  = $this->wmAreas['flags'] ?? 0;                   // flags added in 4.x
+                    else if ($isMultilevel)
+                        $outFile .= '-'.$floorIdx;
 
                     if ($isMultilevel)
-                        $this->multiLevelZones[$zoneId] = [];
+                        $this->multiLevelZones[$zoneId][$floorIdx] = $outFile;
 
-                    // TODO
-                    // - Ahn'Kahet (4494) has a secondary map file, that is not referenced in DungeonMap.dbc but looks nice. Lets manually reference it.
-                    // if (isset($floorData[4494]))
-                        // $floorData[4494][1] = 2;
-                    if ($zoneId == 206)
-                        var_dump($floors);
-
-
-                    foreach ($floors as $locId => [$floorData, $basePath])
+                    foreach ($tileData as $tileIdx => $filePath)
                     {
-                        ksort($floorData);
-
-                        $resOverlay = null;
-                        if (!$isMultilevel)
-                            $resOverlay = $this->generateOverlay($wmaId, $name, $basePath);
-
-                        // create spawn-maps if wanted
-                        if ($resOverlay && $this->modeMask & self::M_SPAWNS)
-                        {
-                            $outFile = $this->genSteps[self::M_SPAWNS][self::GEN_IDX_DEST_INFO][0][0] . $zoneId . '.png';
-                            if (!$this->buildSpawnMap($resOverlay, $outFile))
-                                $this->success = false;
-                        }
-
-                        foreach ($floorData as $floorIdx => $tileData)
-                        {
-                            $outFile = $zoneId;
-
-                            // naming of the base floor file is a bit wonky. unsure when the -0 suffix should be implicit or explicit
-                            // just note, that the floor names from GlobalStrings.lua always have a '0' as base level suffix
-
-                            if (!$floorIdx && $isMultilevel && !($flags & self::AREA_FLAG_DEFAULT_FLOOR_TERRAIN))
-                                CLI::write('[img-maps] zone '.$name.' is multilevel and has base level map file, but is not flagged for use', CLI::LOG_INFO);
-
-                            if ($isMultilevel && !$floorIdx)
-                            {
-                                if (in_array($mapId, self::CONTINENTS))
-                                    $outFile .= '-0';
-                                else if ($this->wmAreas['defaultDungeonMapId'] < 0)
-                                    $outFile .= '-0';
-                                // else
-                                    // implicit -0
-                            }
-                            else if ($isMultilevel)
-                                $outFile .= '-'.$floorIdx;
-
-                            if ($isMultilevel)
-                                $this->multiLevelZones[$zoneId][$floorIdx] = $outFile;
-
-
-                            foreach ($tileData as $tileIdx => $filePath)
-                            {
-
-                            }
-                        }
-                    }
-
-                    if ($isMultilevel)
-                        $this->multiLevelZones[$zoneId] = array_values($this->multiLevelZones[$zoneId]);
-
-                    if ($this->modeMask & self::M_SUBZONES)
-                    {
-                        // get subzones for mapFile from wmaData and apply overlays
+                        // Process tile data
                     }
                 }
+
+                if ($isMultilevel)
+                    $this->multiLevelZones[$zoneId] = array_values($this->multiLevelZones[$zoneId]);
+
+                if ($this->modeMask & self::M_SUBZONES)
+                {
+                    // get subzones for mapFile from wmaData and apply overlays
+                }
+            }
         */
 
         $progressLoc = -1;
@@ -709,6 +713,10 @@ CLISetup::registerSetup("build", new class extends SetupScript
         foreach (CLISetup::$locales as $lId => $loc)
         {
             Lang::load($loc);
+
+            // Skip locales that don't have GlobalStrings data
+            if (!isset($zoneAreas[$lId]))
+                continue;
 
             // "custom" - show second level of Ahn'Kahet not shown but present in-game
             if (isset($zoneAreas[$lId][4494]))

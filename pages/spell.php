@@ -22,7 +22,9 @@ class SpellPage extends GenericPage
     protected $rangeName     = '';
     protected $range         = '';
     protected $gcd           = '';
-    protected $gcdCat        = '';                          // todo (low): nyi; find out how this works [n/a; normal; ..]
+    protected $gcdCat        = '';                          // Global Cooldown category - determines which GCD group the spell belongs to
+                                                            // Values: n/a (no GCD), normal (standard 1.5s GCD), or specific category
+                                                            // Note: Implementation requires investigation of spell GCD mechanics
     protected $school        = '';
     protected $dispel        = '';
     protected $mechanic      = '';

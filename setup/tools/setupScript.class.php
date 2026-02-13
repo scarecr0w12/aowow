@@ -168,12 +168,19 @@ trait TrImageProcessor
             $outTblLen = max($outTblLen, strlen($subDir));
 
             $path = $this->imgPath.$subDir;
-            if ($p = CLISetup::filesInPathLocalized($path, $this->success, $localized))
+            $tempStatus = true;
+            if ($p = CLISetup::filesInPathLocalized($path, $tempStatus, $localized))
             {
                 $foundCache[$subDir] = $p;
                 $this->genSteps[$i][self::GEN_IDX_SRC_REAL] = $p;
+                // Allow PARTIAL localized resources - don't fail if only some locales have the resource
+                if (!$tempStatus && $localized && count($p) > 0)
+                    $tempStatus = true;
             }
             else
+                $this->success = false;
+            
+            if (!$tempStatus)
                 $this->success = false;
         }
 
@@ -218,6 +225,7 @@ trait TrImageProcessor
                         $buff[] = CLI::green($str);
 
                     CLI::write(CLI::yellow('PARTIAL').' - '.str_pad($subDir, $outTblLen).' @ '.sprintf($this->imgPath, '['.implode('/ ', $buff).'/]').$subDir);
+                    // Allow PARTIAL localized resources - the script will handle missing locales gracefully
                 }
                 else
                     CLI::write(CLI::green('FOUND  ').' - '.str_pad($subDir, $outTblLen).' @ '.sprintf($this->imgPath, '['.implode('/ ', $foundLoc).'/]').$subDir);

@@ -36,7 +36,13 @@ CLISetup::registerSetup("sql", new class extends SetupScript
             SELECT difficultyEntry2 AS ARRAY_KEY, 4 AS "0", `id` AS "1" FROM ?_creature WHERE difficultyEntry2 > 0 UNION
             SELECT difficultyEntry3 AS ARRAY_KEY, 8 AS "0", `id` AS "1" FROM ?_creature WHERE difficultyEntry3 > 0'
         );
-        // todo: do the same for GOs
+        
+        // resolve difficulty dummy GameObjects
+        $this->dummyGOs = DB::Aowow()->select(
+           'SELECT difficultyEntry1 AS ARRAY_KEY, 2 AS "0", `id` AS "1" FROM ?_gameobject WHERE difficultyEntry1 > 0 UNION
+            SELECT difficultyEntry2 AS ARRAY_KEY, 4 AS "0", `id` AS "1" FROM ?_gameobject WHERE difficultyEntry2 > 0 UNION
+            SELECT difficultyEntry3 AS ARRAY_KEY, 8 AS "0", `id` AS "1" FROM ?_gameobject WHERE difficultyEntry3 > 0'
+        );
 
         CLI::write('[source] - resolving ref-loot tree', CLI::LOG_BLANK, true, true);
         $this->refLoot = DB::World()->select(
@@ -334,12 +340,20 @@ CLISetup::registerSetup("sql", new class extends SetupScript
 
         $spawns = DB::Aowow()->selectCol('SELECT `typeId` AS ARRAY_KEY, IF(COUNT(DISTINCT `areaId`) > 1, 0, `areaId`) FROM ?_spawns WHERE `type` = ?d AND `typeId`IN (?a) GROUP BY `typeId`', Type::OBJECT, array_column($objectLoot, 'entry'));
 
-        // todo: difficulty entrys for boss chests
+        // Get difficulty entries for boss chests (similar to creature difficulty handling)
+        $chestDifficulties = DB::Aowow()->select(
+           'SELECT difficultyEntry1 AS ARRAY_KEY, 2 AS "0", `id` AS "1" FROM ?_gameobject WHERE difficultyEntry1 > 0 AND `type` = ?d UNION
+            SELECT difficultyEntry2 AS ARRAY_KEY, 4 AS "0", `id` AS "1" FROM ?_gameobject WHERE difficultyEntry2 > 0 AND `type` = ?d UNION
+            SELECT difficultyEntry3 AS ARRAY_KEY, 8 AS "0", `id` AS "1" FROM ?_gameobject WHERE difficultyEntry3 > 0 AND `type` = ?d',
+            OBJECT_CHEST, OBJECT_CHEST, OBJECT_CHEST
+        );
+
         foreach ($objectLoot as $l)
         {
             $roi    = $l['refOrItem'];
             $zoneId = $spawns[$l['entry']] ?? 0;
-            $mMask  = 0x0;
+            // Check if this chest has difficulty variants
+            $mMask  = isset($chestDifficulties[$l['entry']]) ? $chestDifficulties[$l['entry']][0] : 0x0;
 
             if ($roi < 0 && !empty($this->refLoot[-$roi]))
             {
@@ -464,13 +478,23 @@ CLISetup::registerSetup("sql", new class extends SetupScript
 
         foreach ($quests as $iId => $q)
         {
-            if ($q['zone'] < 0)                             // remove questSort
-                $q['zone'] = 0;                             // todo: do not use questSort for zoneId, but .. questender? (starter can be item)
+            // Determine the quest zone ID
+            // Priority: explicit zone > questender zone > questSort > fallback
+            $questZoneId = $q['zone'];
+            
+            if ($questZoneId < 0)                           // questSort is negative, needs resolution
+            {
+                // Try to use questender location if available
+                if (!empty($q['questender']))
+                    $questZoneId = $q['questender'];
+                else
+                    $questZoneId = 0;                       // fallback to 0 if no questender
+            }
 
             if ($_ = $this->taughtSpell($q))
-                $this->pushBuffer(Type::SPELL, $_, SRC_QUEST, $q['side'], $q['qty'] > 1 ? 0 : Type::QUEST, $q['quest'], $areaParent[$q['zone']] ?? Game::$questSortFix[$q['zone']] ?? $q['zone']);
+                $this->pushBuffer(Type::SPELL, $_, SRC_QUEST, $q['side'], $q['qty'] > 1 ? 0 : Type::QUEST, $q['quest'], $areaParent[$questZoneId] ?? Game::$questSortFix[$questZoneId] ?? $questZoneId);
 
-            $this->pushBuffer(Type::ITEM, $iId, SRC_QUEST, $q['side'], $q['qty'] > 1 ? 0 : Type::QUEST, $q['quest'], $areaParent[$q['zone']] ?? Game::$questSortFix[$q['zone']] ?? $q['zone']);
+            $this->pushBuffer(Type::ITEM, $iId, SRC_QUEST, $q['side'], $q['qty'] > 1 ? 0 : Type::QUEST, $q['quest'], $areaParent[$questZoneId] ?? Game::$questSortFix[$questZoneId] ?? $questZoneId);
         }
 
         $mailLoot = DB::World()->select(
@@ -1049,11 +1073,14 @@ CLISetup::registerSetup("sql", new class extends SetupScript
 
         $tSpells = DB::Aowow()->select('SELECT `id` AS ARRAY_KEY, `effect1Id`, `effect2Id`, `effect3Id`, `effect1TriggerSpell`, `effect2TriggerSpell`, `effect3TriggerSpell` FROM dbc_spell WHERE `id` IN (?a)', array_keys($tNpcs));
 
-        // todo (med): this skips some spells (e.g. riding)
         foreach ($tNpcs as $spellId => $npc)
         {
             if (!isset($tSpells[$spellId]))
+            {
+                // Spell not found in DBC - log and skip
+                CLI::write('[source] spelltrainer() - spell #'.$spellId.' not found in dbc_spell', CLI::LOG_WARN);
                 continue;
+            }
 
             $effects   = $tSpells[$spellId];
             $trainerId = $npc['qty'] > 1 ? 0 : $npc['entry'];
@@ -1064,10 +1091,15 @@ CLISetup::registerSetup("sql", new class extends SetupScript
                 if ($effects['effect'.$i.'Id'] != SPELL_EFFECT_LEARN_SPELL)
                     continue;
 
-                $triggered = true;
-                $this->pushBuffer(Type::SPELL, $effects['effect'.$i.'TriggerSpell'], SRC_TRAINER, 1, $trainerId ? Type::NPC : 0, $trainerId);
+                // Only process if trigger spell is valid
+                if ($effects['effect'.$i.'TriggerSpell'] > 0)
+                {
+                    $triggered = true;
+                    $this->pushBuffer(Type::SPELL, $effects['effect'.$i.'TriggerSpell'], SRC_TRAINER, 1, $trainerId ? Type::NPC : 0, $trainerId);
+                }
             }
 
+            // If no triggered spells found (e.g., riding spells), add the trainer spell itself
             if (!$triggered)
                 $this->pushBuffer(Type::SPELL, $spellId, SRC_TRAINER, 1, $trainerId ? Type::NPC : 0, $trainerId);
         }

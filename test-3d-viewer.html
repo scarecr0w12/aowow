@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Model Viewer Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #0066cc;
+        }
+        .test-section {
+            background: #222;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border-left: 4px solid #0066cc;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        .log {
+            background: #111;
+            border: 1px solid #333;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px;
+        }
+        .log-entry.success {
+            color: #00ff00;
+        }
+        .log-entry.error {
+            color: #ff6666;
+        }
+        .log-entry.info {
+            color: #66ccff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>3D Model Viewer Test</h1>
+        
+        <div class="test-section">
+            <h2>API Endpoint Test</h2>
+            <p>Test the model lookup API to verify it's returning correct paths</p>
+            <button onclick="testAPI(1, 1)">Test NPC (type=1, displayId=1)</button>
+            <button onclick="testAPI(3, 12345)">Test Item (type=3, displayId=12345)</button>
+            <button onclick="testAPI(16, 1, 0)">Test Character (type=16, race=1, sex=0)</button>
+            <div class="log" id="apiLog"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3D Model Viewer Test</h2>
+            <p>Load 3D models using the WebGL viewer</p>
+            <button onclick="loadNPCModel()">Load NPC Model</button>
+            <button onclick="loadItemModel()">Load Item Model</button>
+            <button onclick="loadCharacterModel()">Load Character Model</button>
+            <button onclick="closeViewer()">Close Viewer</button>
+            <div class="log" id="viewerLog"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Console Output</h2>
+            <div class="log" id="consoleLog"></div>
+        </div>
+    </div>
+
+    <script src="/static/js/webgl-viewer.js"></script>
+    <script>
+        // Capture console logs
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        
+        function addLog(message, type = 'info') {
+            const logDiv = document.getElementById('consoleLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog(args.join(' '), 'info');
+        };
+
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLog(args.join(' '), 'error');
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog(args.join(' '), 'error');
+        };
+
+        // Test API endpoint
+        function testAPI(type, displayId, race = 0, sex = 0) {
+            const logDiv = document.getElementById('apiLog');
+            logDiv.innerHTML = '';
+            
+            const url = `/api/model-lookup.php?type=${type}&displayId=${displayId}&race=${race}&sex=${sex}`;
+            addAPILog(`Testing: ${url}`, 'info');
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    addAPILog(`Success: ${JSON.stringify(data, null, 2)}`, 'success');
+                })
+                .catch(error => {
+                    addAPILog(`Error: ${error.message}`, 'error');
+                });
+        }
+
+        function addAPILog(message, type = 'info') {
+            const logDiv = document.getElementById('apiLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = message;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // Test 3D viewer
+        function loadNPCModel() {
+            console.log('Loading NPC model...');
+            if (window.ModelViewer) {
+                window.ModelViewer.show({
+                    type: 1,
+                    displayId: 1,
+                    humanoid: 1
+                });
+            } else {
+                console.error('ModelViewer not available');
+            }
+        }
+
+        function loadItemModel() {
+            console.log('Loading item model (displayId: 50736)...');
+            if (window.ModelViewer) {
+                window.ModelViewer.show({
+                    type: 3,
+                    displayId: 50736,
+                    slot: 1
+                });
+            } else {
+                console.error('ModelViewer not available');
+            }
+        }
+
+        function loadCharacterModel() {
+            console.log('Loading character model...');
+            if (window.ModelViewer) {
+                window.ModelViewer.show({
+                    type: 16,
+                    displayId: 1,
+                    race: 1,
+                    sex: 0
+                });
+            } else {
+                console.error('ModelViewer not available');
+            }
+        }
+
+        function closeViewer() {
+            console.log('Closing viewer...');
+            if (window.ModelViewer) {
+                window.ModelViewer.hide();
+            }
+        }
+
+        // Log initialization
+        console.log('3D Model Viewer Test Page Loaded');
+        console.log('ModelViewer available:', typeof window.ModelViewer !== 'undefined');
+    </script>
+</body>
+</html>

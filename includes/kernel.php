@@ -1,23 +1,5 @@
 <?php
 
-// debug START (disable this in production) // Qeme
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
-
-// echo "kernel.php is being executed.<br>";
-
-// // Add error and exception handlers
-// set_exception_handler(function($e) {
-//     echo 'Uncaught exception: ', $e->getMessage(), "\n";
-// });
-
-// set_error_handler(function($errno, $errstr, $errfile, $errline) {
-//     echo "Error: [$errno] $errstr - $errfile:$errline";
-//     return true;
-// });
-// debug END
-
 mb_internal_encoding('UTF-8');
 mysqli_report(MYSQLI_REPORT_ERROR);
 
@@ -53,32 +35,9 @@ require_once 'includes/utilities.php';                      // helper functions
 require_once 'includes/config.class.php';                   // Config holder
 require_once 'includes/user.class.php';                     // Session handling (could be skipped for CLI context except for username and password validation used in account creation)
 
-// todo: make everything below autoloaded
-require_once 'includes/stats.class.php';                    // Game entity statistics conversion
-require_once 'includes/game.php';                           // game related data & functions
-require_once 'includes/profiler.class.php';                 // Profiler feature
-require_once 'includes/markup.class.php';                   // manipulate markup text
-require_once 'includes/community.class.php';                // handle comments, screenshots and videos
-require_once 'includes/loot.class.php';                     // build lv-tabs containing loot-information
-require_once 'pages/genericPage.class.php';
-
-// TC systems
-spl_autoload_register(function ($class) {
-    switch ($class) {
-        case 'SmartAI':
-        case 'SmartEvent':
-        case 'SmartAction':
-        case 'SmartTarget':
-            require_once 'includes/components/SmartAI/SmartAI.class.php';
-            require_once 'includes/components/SmartAI/SmartEvent.class.php';
-            require_once 'includes/components/SmartAI/SmartAction.class.php';
-            require_once 'includes/components/SmartAI/SmartTarget.class.php';
-            break;
-        case 'Conditions':
-            require_once 'includes/components/Conditions/Conditions.class.php';
-            break;
-    }
-});
+// Register PSR-4 autoloader for automatic class loading
+require_once 'includes/Autoloader.class.php';
+Autoloader::register();
 
 // autoload List-classes, associated filters and pages
 spl_autoload_register(function ($class) {

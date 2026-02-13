@@ -39,8 +39,23 @@ trait TrRequestData
 
         if ($this->_post)
         {
-            if ($_POST)
-                $this->_post = filter_input_array(INPUT_POST, $this->_post);
+            $postData = $_POST;
+            
+            // Check if POST data is JSON (Content-Type: application/json)
+            $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+            if (strpos($contentType, 'application/json') !== false)
+            {
+                $jsonInput = file_get_contents('php://input');
+                if ($jsonInput)
+                {
+                    $decoded = json_decode($jsonInput, true);
+                    if (is_array($decoded))
+                        $postData = $decoded;
+                }
+            }
+            
+            if ($postData)
+                $this->_post = filter_input_array(INPUT_POST, $this->_post, false) ?: $this->_filterPostData($postData, $this->_post);
             else
                 $this->_post = array_fill_keys(array_keys($this->_post), null);
         }
@@ -62,6 +77,48 @@ trait TrRequestData
         }
 
         $this->filtered = true;
+    }
+
+    private function _filterPostData(array $data, array $filters) : array
+    {
+        $result = [];
+        foreach ($filters as $key => $filterSpec)
+        {
+            if (!isset($data[$key]))
+            {
+                $result[$key] = null;
+                continue;
+            }
+
+            $value = $data[$key];
+            
+            if (isset($filterSpec['filter']))
+            {
+                if ($filterSpec['filter'] == FILTER_CALLBACK && isset($filterSpec['options']))
+                {
+                    $callback = $filterSpec['options'];
+                    if (is_callable($callback))
+                    {
+                        if (isset($filterSpec['flags']) && $filterSpec['flags'] == FILTER_REQUIRE_ARRAY)
+                        {
+                            if (is_array($value))
+                                $result[$key] = array_map($callback, $value);
+                            else
+                                $result[$key] = [];
+                        }
+                        else
+                            $result[$key] = $callback((string)$value);
+                    }
+                }
+                else
+                {
+                    $result[$key] = filter_var($value, $filterSpec['filter']);
+                }
+            }
+            else
+                $result[$key] = $value;
+        }
+        return $result;
     }
 
     private static function checkEmptySet(string $val) : bool
@@ -1158,7 +1215,7 @@ abstract class Util
                 $x['sourceB'] = $miscData['what'];          // screenshot:1 or video:NYD
                 $x['amount']  = Cfg::get('REP_REWARD_UPLOAD');
                 break;
-            case SITEREP_ACTION_GOOD_REPORT:                // NYI
+            case SITEREP_ACTION_GOOD_REPORT:
             case SITEREP_ACTION_BAD_REPORT:
                 if (empty($miscData['id']))                 // reportId
                     return false;
@@ -1173,7 +1230,7 @@ abstract class Util
                 $x['sourceA'] = $miscData['id'];
                 $x['amount']  = Cfg::get('REP_REWARD_ARTICLE');
                 break;
-            case SITEREP_ACTION_USER_WARNED:                // NYI
+            case SITEREP_ACTION_USER_WARNED:
             case SITEREP_ACTION_USER_SUSPENDED:
                 if (empty($miscData['id']))                 // banId
                     return false;

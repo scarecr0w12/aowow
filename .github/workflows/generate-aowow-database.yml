@@ -1,30 +1,202 @@
 name: generate-aowow-database
+
 on:
   workflow_dispatch:
+  schedule:
+    # Run weekly on Sunday at 2 AM UTC
+    - cron: '0 2 * * 0'
+
+env:
+  # Database configuration
+  DB_HOST: ${{ secrets.DB_HOST || '127.0.0.1' }}
+  DB_PORT: ${{ secrets.DB_PORT || '63306' }}
+  DB_USER: ${{ secrets.DB_USER || 'root' }}
+  DB_PASS: ${{ secrets.DB_PASS || 'password' }}
+  AOWOW_DB_NAME: ${{ secrets.AOWOW_DB_NAME || 'tmp_aowow' }}
+  WORLD_DB_NAME: ${{ secrets.WORLD_DB_NAME || 'acore_world' }}
+  AUTH_DB_NAME: ${{ secrets.AUTH_DB_NAME || 'acore_auth' }}
+  CHARACTERS_DB_NAME: ${{ secrets.CHARACTERS_DB_NAME || 'acore_characters' }}
+  AOWOW_DB_PREFIX: 'aowow_'
+  WORLD_DB_PREFIX: ''
+  AUTH_DB_PREFIX: ''
+  CHARACTERS_DB_PREFIX: ''
+  REALM_ID: '1'
 
 jobs:
   generate-aowow-db:
+    name: Generate AoWoW Database
     permissions: write-all
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
     steps:
-      - name: checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-      
-      - name: "run scripts"
+        with:
+          fetch-depth: 1
+
+      - name: Cache Docker images
+        uses: actions/cache@v4
+        with:
+          path: /var/lib/docker
+          key: docker-${{ runner.os }}-${{ hashFiles('**/docker-compose.yml') }}
+          restore-keys: |
+            docker-${{ runner.os }}-
+
+      - name: Cache AzerothCore Docker
+        id: cache-acore
+        uses: actions/cache@v4
+        with:
+          path: acore-docker
+          key: acore-docker-${{ github.sha }}
+          restore-keys: |
+            acore-docker-
+
+      - name: Clone AzerothCore Docker
+        if: steps.cache-acore.outputs.cache-hit != 'true'
+        run: |
+          echo "::group::Cloning AzerothCore Docker"
+          git clone --depth 1 https://github.com/azerothcore/acore-docker
+          echo "::endgroup::"
+
+      - name: Start Docker containers
+        run: |
+          echo "::group::Starting Docker containers"
+          cd acore-docker
+          docker compose up -d
+          echo "Waiting for database to be ready..."
+          sleep 30
+          echo "::endgroup::"
+
+      - name: Verify database connection
+        run: |
+          echo "::group::Verifying database connection"
+          max_attempts=10
+          attempt=0
+          until mysql -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} -p${DB_PASS} -e "SELECT 1" &> /dev/null; do
+            attempt=$((attempt + 1))
+            if [ $attempt -ge $max_attempts ]; then
+              echo "::error::Failed to connect to database after $max_attempts attempts"
+              exit 1
+            fi
+            echo "Attempt $attempt/$max_attempts: Database not ready, waiting..."
+            sleep 5
+          done
+          echo "✓ Database connection successful"
+          echo "::endgroup::"
+
+      - name: Create environment file
+        run: |
+          echo "::group::Creating environment configuration"
+          cd setup/
+          cat > .env << EOF
+          DB_HOST=${DB_HOST}
+          DB_PORT=${DB_PORT}
+          DB_USER=${DB_USER}
+          DB_PASS=${DB_PASS}
+          AOWOW_DB_NAME=${AOWOW_DB_NAME}
+          WORLD_DB_NAME=${WORLD_DB_NAME}
+          AUTH_DB_NAME=${AUTH_DB_NAME}
+          CHARACTERS_DB_NAME=${CHARACTERS_DB_NAME}
+          AOWOW_DB_PREFIX=${AOWOW_DB_PREFIX}
+          WORLD_DB_PREFIX=${WORLD_DB_PREFIX}
+          AUTH_DB_PREFIX=${AUTH_DB_PREFIX}
+          CHARACTERS_DB_PREFIX=${CHARACTERS_DB_PREFIX}
+          REALM_ID=${REALM_ID}
+          EOF
+          echo "✓ Environment file created"
+          echo "::endgroup::"
+
+      - name: Generate AoWoW database
+        run: |
+          echo "::group::Generating AoWoW database"
+          cd setup/
+          chmod +x generate-db-secure.sh
+
+          if bash generate-db-secure.sh; then
+            echo "✓ Database generation successful"
+          else
+            echo "::error::Database generation failed"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+      - name: Get AzerothCore revision
+        id: get-revision
+        run: |
+          echo "::group::Getting AzerothCore revision"
+          revision=$(mysql -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} -p${DB_PASS} -s -N -e \
+            "SELECT substring_index(substring_index(revision, 'rev. ', -1), '+ 2', 1) \
+             FROM ${AUTH_DB_NAME}.uptime ORDER BY starttime DESC LIMIT 1;")
+
+          if [ -z "$revision" ]; then
+            echo "::warning::Could not determine AzerothCore revision"
+            revision="unknown"
+          fi
+
+          echo "revision=$revision" >> $GITHUB_OUTPUT
+          echo "✓ Revision: $revision"
+          echo "::endgroup::"
+
+      - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git clone https://github.com/azerothcore/acore-docker
-          cd acore-docker
-          docker compose up -d
-
-          cd ../setup/
-
-          bash generate-db.sh
-
-          cd ..
-
-          revision=`mysql -u root -ppassword -P 63306 -h 127.0.0.1 -s -N -e "SELECT substring_index(substring_index(revision, 'rev. ', -1), '+ 2', 1)  FROM acore_auth.uptime ORDER BY starttime DESC LIMIT 1;"`
+          echo "::group::Creating GitHub release"
           release_name=$(date '+%Y-%m-%d_%H-%M-%S')
-          gh release create $release_name --title "$release_name" --notes "Revision: [$revision](https://github.com/azerothcore/azerothcore-wotlk/commit/$revision)"
-          gh release upload $release_name "aowow_db.sql.zip"
+          revision="${{ steps.get-revision.outputs.revision }}"
+
+          release_notes="## AoWoW Database Export
+
+          **Generated**: $(date '+%Y-%m-%d %H:%M:%S UTC')
+          **AzerothCore Revision**: [$revision](https://github.com/azerothcore/azerothcore-wotlk/commit/$revision)
+          **Workflow**: [Run #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+          ### Contents
+          - AoWoW database dump
+          - World database updates
+
+          ### Installation
+          \`\`\`bash
+          unzip aowow_db.sql.zip
+          mysql -u root -p aowow < aowow_update.sql
+          \`\`\`"
+
+          if gh release create "$release_name" \
+            --title "AoWoW Database - $release_name" \
+            --notes "$release_notes" \
+            "aowow_db.sql.zip"; then
+            echo "✓ Release created: $release_name"
+          else
+            echo "::error::Failed to create release"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aowow-database-${{ github.run_number }}
+          path: |
+            aowow_db.sql.zip
+            setup/*.log
+          retention-days: 7
+
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "::group::Cleanup"
+          cd acore-docker
+          docker compose down -v
+          echo "✓ Cleanup complete"
+          echo "::endgroup::"
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Database Generation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Revision**: ${{ steps.get-revision.outputs.revision }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run Number**: #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY

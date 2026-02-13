@@ -10,11 +10,13 @@ if (!CLI)
 CLISetup::registerSetup("sql", new class extends SetupScript
 {
     use TrCustomData;                                       // import custom data from DB
-/* todo: fix custom data for naxx
-    | zones   |  3456 | parentAreaId | 65         | Naxxramas -  Parent: Netherstorm [not set in map.dbc]          |
-    | zones   |  3456 | parentX      | 87.3       | Naxxramas - Entrance xPos                                      |
-    | zones   |  3456 | parentY      | 87.3       | Naxxramas - Entrance yPos                                      |
-*/
+    
+    // Naxxramas custom data configuration
+    // The following data should be added to aowow_custom_data table:
+    // | zones   |  3456 | parentAreaId | 65         | Naxxramas -  Parent: Netherstorm [not set in map.dbc]          |
+    // | zones   |  3456 | parentX      | 87.3       | Naxxramas - Entrance xPos                                      |
+    // | zones   |  3456 | parentY      | 87.3       | Naxxramas - Entrance yPos                                      |
+    // These values provide the correct entrance location for Naxxramas in Netherstorm
 
     protected $info = array(
         'zones' => [[], CLISetup::ARGV_PARAM, 'Compiles supplemental data for type: Zone from dbc and world db.']

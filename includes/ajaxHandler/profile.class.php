@@ -39,6 +39,7 @@ class AjaxProfile extends AjaxHandler
         'public'       => ['filter' => FILTER_SANITIZE_NUMBER_INT],
         'gearscore'    => ['filter' => FILTER_SANITIZE_NUMBER_INT],
         'inv'          => ['filter' => FILTER_CALLBACK, 'options' => 'AjaxHandler::checkIdListUnsigned', 'flags' => FILTER_REQUIRE_ARRAY],
+        'inventory'    => ['filter' => FILTER_CALLBACK, 'options' => 'AjaxProfile::normalizeInventory', 'flags' => FILTER_REQUIRE_ARRAY],
     );
 
     public function __construct(array $params)
@@ -384,26 +385,29 @@ class AjaxProfile extends AjaxHandler
             // either the socket is -1 or it has an itemId in a socket where there shouldn't be one
             $keys  = ['id', 'slot', 'item', 'subitem', 'permEnchant', 'tempEnchant', 'gem1', 'gem2', 'gem3', 'gem4'];
 
+            // Use new inventory format if available, otherwise fall back to old format
+            $invData = !empty($this->_post['inventory']) ? $this->_post['inventory'] : $this->_post['inv'];
+
             // validate Enchantments
             $enchIds = array_merge(
-                array_column($this->_post['inv'], 3),       // perm enchantments
-                array_column($this->_post['inv'], 4)        // temp enchantments (not used..?)
+                array_column($invData, 3),       // perm enchantments
+                array_column($invData, 4)        // temp enchantments (not used..?)
             );
             $enchs = new EnchantmentList(array(['id', $enchIds]));
 
             // validate items
             $itemIds = array_merge(
-                array_column($this->_post['inv'], 1),       // base item
-                array_column($this->_post['inv'], 5),       // gem slot 1
-                array_column($this->_post['inv'], 6),       // gem slot 2
-                array_column($this->_post['inv'], 7),       // gem slot 3
-                array_column($this->_post['inv'], 8)        // gem slot 4
+                array_column($invData, 1),       // base item
+                array_column($invData, 5),       // gem slot 1
+                array_column($invData, 6),       // gem slot 2
+                array_column($invData, 7),       // gem slot 3
+                array_column($invData, 8)        // gem slot 4
             );
 
             $items = new ItemList(array(['id', $itemIds]));
             if (!$items->error)
             {
-                foreach ($this->_post['inv'] as $slot => $itemData)
+                foreach ($invData as $slot => $itemData)
                 {
                     if ($slot + 1 == array_sum($itemData))  // only slot definition set => empty slot
                     {
@@ -773,6 +777,30 @@ class AjaxProfile extends AjaxHandler
             return $val;
 
         return '';
+    }
+
+    protected static function normalizeInventory($val) : array
+    {
+        if (!is_array($val))
+            return [];
+
+        $result = [];
+        foreach ($val as $slot => $itemData)
+        {
+            if (!is_array($itemData))
+                continue;
+
+            $normalized = [];
+            foreach ($itemData as $v)
+            {
+                $normalized[] = (int)$v;
+            }
+
+            if (!empty($normalized))
+                $result[$slot] = $normalized;
+        }
+
+        return $result;
     }
 }
 

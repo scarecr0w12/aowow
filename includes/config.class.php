@@ -365,7 +365,13 @@ class Cfg
             return '';
         }
 
-        // not in CLI mode and build() can only be run from CLI. .. todo: other options..?
+        // Build system can only be run from CLI mode
+        // Future enhancement options:
+        // 1. Queue system - store rebuild requests in database, process via cron
+        // 2. Background worker - use job queue (Redis, RabbitMQ) for async processing
+        // 3. Web-based trigger - create secure endpoint that triggers CLI build via shell_exec
+        // 4. Configuration API - allow dynamic config changes via web interface with validation
+        
         exec('php aowow --build='.implode(',', self::$rebuildScripts[$key]), $out);
         foreach ($out as $o)
             if (strstr($o, 'ERR'))

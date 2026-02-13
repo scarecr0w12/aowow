@@ -1,0 +1,18 @@
+{
+  "name": "aowow-webgl-viewer",
+  "version": "1.0.0",
+  "description": "WebGL-based 3D model viewer for AoWoW, replacing Flash ZAMviewer",
+  "type": "module",
+  "main": "dist/viewer.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^r128"
+  },
+  "devDependencies": {
+    "vite": "^4.4.0"
+  }
+}

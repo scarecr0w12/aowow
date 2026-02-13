@@ -103,7 +103,7 @@ class ArenaTeamPage extends GenericPage
         if ($this->doResync)
             return;
 
-        $this->addScript([SC_JS_FILE, '?data=realms.weight-presets']);
+        $this->addScript([SC_JS_FILE, '?data=enchants.gems.glyphs.itemsets.pets.pet-talents.quick-excludes.realms.statistics.weight-presets.achievements']);
 
         $this->redButtons[BUTTON_RESYNC] = [$this->subjectGUID, 'arena-team'];
 

@@ -67,8 +67,7 @@ class GuildsPage extends GenericPage
 
         $conditions = array(
             ['c.deleteInfos_Account', null],
-            ['c.level', MAX_LEVEL, '<='],                   // prevents JS errors
-            [['c.extra_flags', Profiler::CHAR_GMFLAGS, '&'], 0]
+            ['c.level', MAX_LEVEL, '<=']                    // prevents JS errors
         );
         if ($_ = $this->filterObj->getConditions())
             $conditions[] = $_;

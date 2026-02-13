@@ -40,7 +40,16 @@ function ss_Refresh(openNext, type, typeId) {
     new Ajax('?admin=screenshots&action=list' + (ss_getAll ? '&all' : ''), {
         method: 'get',
         onSuccess: function (xhr) {
-            eval(xhr.responseText);
+            // Security: Parse JSON response instead of eval
+            try {
+                var data = JSON.parse(xhr.responseText);
+                // Assign to global variables (legacy code pattern)
+                if (data.ssm_screenshotPages) ssm_screenshotPages = data.ssm_screenshotPages;
+                if (data.ssm_numPagesFound) ssm_numPagesFound = data.ssm_numPagesFound;
+            } catch (e) {
+                console.error('Failed to parse screenshot list:', e);
+                return;
+            }
 
             if (ssm_screenshotPages.length > 0) {
                 $WH.ge('show-all-pages').innerHTML = ' &ndash; <a href="?admin=screenshots&amp;all">Show All</a> (' + ssm_numPagesFound + ')';
@@ -69,8 +78,15 @@ function ss_Manage(_this, type, typeId, openNext) {
     new Ajax('?admin=screenshots&action=manage&type=' + type + '&typeid=' + typeId, {
         method: 'get',
         onSuccess: function (xhr) {
+            // Security: Parse JSON response instead of eval
+            try {
+                var data = JSON.parse(xhr.responseText);
+                if (data.ssm_screenshotData) ssm_screenshotData = data.ssm_screenshotData;
+            } catch (e) {
+                console.error('Failed to parse screenshot data:', e);
+                return;
+            }
 
-            eval(xhr.responseText);
             ssm_numPending = 0;
 
             for (var i in ssm_screenshotData) {
@@ -119,7 +135,15 @@ function ss_ManageUser() {
     new Ajax('?admin=screenshots&action=manage&user=' + username.value, {
         method: 'get',
         onSuccess: function (xhr) {
-            eval(xhr.responseText);
+            // Security: Parse JSON response instead of eval
+            try {
+                var data = JSON.parse(xhr.responseText);
+                if (data.ssm_screenshotData) ssm_screenshotData = data.ssm_screenshotData;
+            } catch (e) {
+                console.error('Failed to parse user screenshot data:', e);
+                return;
+            }
+
             var nRows = ssm_screenshotData.length;
             $WH.ge('screenshotTotal').innerHTML = nRows + ' total' + (nRows == 100 ? ' (limit reached)' : '');
             ssm_UpdateList();

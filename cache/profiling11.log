@@ -1,0 +1,10 @@
+
+04:40:56  [OK]    profiler queue started
+04:40:56          sleeping 3.00s..
+04:40:59          fetching char Edun (#508) from realm #1
+04:40:59          char did not log in since last update. skipping...
+04:40:59          sleeping 3.00s..
+04:41:02          fetching char Krirto (#513) from realm #1
+04:41:02          char did not log in since last update. skipping...
+04:41:02          sleeping 3.00s..
+04:41:05  [INFO]  profiler queue empty - process halted!

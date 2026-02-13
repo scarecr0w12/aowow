@@ -285,6 +285,42 @@ class AccountPage extends GenericPage
             )];
         }
 
+        // claimed characters
+        if ($_ = User::getCharacters())
+        {
+            $this->lvTabs[] = ['characterpreview', array(
+                'data'       => $_,
+                'hiddenCols' => []
+            )];
+        }
+
+        // profiles
+        if ($_ = User::getProfiles())
+        {
+            $this->lvTabs[] = ['profilepreview', array(
+                'data'       => $_,
+                'hiddenCols' => []
+            )];
+        }
+
+        // own screenshots
+        if ($_ = CommunityContent::getScreenshots(-User::$id, 0, $nFound))
+        {
+            $this->lvTabs[] = ['screenshot', array(
+                'data'       => $_,
+                '_totalCount' => $nFound
+            )];
+        }
+
+        // own videos
+        if ($_ = CommunityContent::getVideos(-User::$id, 0, $nFound))
+        {
+            $this->lvTabs[] = ['video', array(
+                'data'       => $_,
+                '_totalCount' => $nFound
+            )];
+        }
+
 /*
 <div id="description" class="left"><div id="description-generic"></div>
 
@@ -296,10 +332,6 @@ Markup.printHtml("description text here", "description-generic", { allow: Markup
 <script type="text/javascript">us_addDescription()</script>
 
 */
-        // claimed characters
-        // profiles
-        // own screenshots
-        // own videos
         // own comments (preview)
         // articles guides..?
 

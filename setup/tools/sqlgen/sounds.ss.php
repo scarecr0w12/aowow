@@ -117,12 +117,33 @@ CLISetup::registerSetup("sql", new class extends SetupScript
                         $fileSets[] = [$soundFileIdx, $s['soundFile'.$i], $s['path'], SOUND_TYPE_MP3];
                         $s['soundFile'.$i] = $soundFileIdx;
                     }
-                    // i call bullshit
+                    // Handle files without extension - try to infer from SoundType
                     else if ($s['soundFile'.$i])
                     {
-                        // todo (low) - file extension may be implied by SoundType, but only two entries (12292, 13401) are affected by this, sooo... eh?
-                        CLI::write('[sound] Group '.str_pad('['.$s['id'].']', 7).' '.CLI::bold($s['name']).' has invalid sound file '.CLI::bold($s['soundFile'.$i]).' on index '.$i.'! Skipping...', CLI::LOG_WARN);
-                        $s['soundFile'.$i] = null;
+                        // Some sound files may have the extension implied by their SoundType
+                        // Attempt to add the appropriate extension based on SoundType
+                        $soundType = $s['soundType'] ?? 0;
+                        $inferredExt = null;
+                        
+                        // Map SoundType to file extension
+                        switch ($soundType)
+                        {
+                            case 0:  $inferredExt = '.mp3'; break;   // MP3
+                            case 1:  $inferredExt = '.ogg'; break;   // OGG
+                            case 2:  $inferredExt = '.wav'; break;   // WAV
+                            default: $inferredExt = null;
+                        }
+                        
+                        if ($inferredExt && !preg_match('/\.\w+$/', $s['soundFile'.$i]))
+                        {
+                            $s['soundFile'.$i] .= $inferredExt;
+                            CLI::write('[sound] Group '.str_pad('['.$s['id'].']', 7).' '.CLI::bold($s['name']).' - inferred extension '.$inferredExt.' for sound file on index '.$i, CLI::LOG_INFO);
+                        }
+                        else
+                        {
+                            CLI::write('[sound] Group '.str_pad('['.$s['id'].']', 7).' '.CLI::bold($s['name']).' has invalid sound file '.CLI::bold($s['soundFile'.$i]).' on index '.$i.'! Skipping...', CLI::LOG_WARN);
+                            $s['soundFile'.$i] = null;
+                        }
                     }
                     // empty case
                     else

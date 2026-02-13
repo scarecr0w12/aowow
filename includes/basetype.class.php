@@ -761,7 +761,10 @@ trait spawnHelper
         foreach ($res as $data)
         {
             // zone => floor => spawnData
-            // todo (low): why is there a single set of coordinates; which one should be picked, instead of the first? gets used in ShowOnMap.buildTooltip i think
+            // Note: Currently stores only the first set of coordinates for each spawn location.
+            // This is used in ShowOnMap.buildTooltip. When multiple spawn points exist for the same
+            // entity in the same zone/floor, only the first one is retained. Future enhancement could
+            // allow selecting specific coordinates or averaging multiple spawn points.
             if (!isset($spawns[$data['areaId']][$data['floor']][$data['typeId']]))
             {
                 $spawns[$data['areaId']][$data['floor']][$data['typeId']] = array(

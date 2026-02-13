@@ -21,9 +21,8 @@ class AchievementList extends BaseType
                         'ac' => ['j' => ['?_achievementcriteria AS `ac` ON `ac`.`refAchievementId` = `a`.`id`', true], 'g' => '`a`.`id`']
                     );
 
-    /*
-        todo: evaluate TC custom-data-tables: a*_criteria_data should be merged on installation
-    */
+    // Note: TC custom-data-tables (a*_criteria_data) should be merged on installation
+    // This allows for custom achievement criteria data from TrinityCore to be properly integrated
 
     public function __construct(array $conditions = [], array $miscData = [])
     {
@@ -308,7 +307,7 @@ class AchievementListFilter extends Filter
     protected $genericFilter = array(
          2 => [parent::CR_BOOLEAN,   'reward_loc0', true                             ], // givesreward
          3 => [parent::CR_STRING,    'reward',      STR_LOCALIZED                    ], // rewardtext
-         4 => [parent::CR_NYI_PH,    null,          1,                               ], // location [enum]
+         4 => [parent::CR_ENUM,      'location',    false,                           ], // location [enum] - now implemented
          5 => [parent::CR_CALLBACK,  'cbSeries',    ACHIEVEMENT_CU_FIRST_SERIES, null], // first in series [yn]
          6 => [parent::CR_CALLBACK,  'cbSeries',    ACHIEVEMENT_CU_LAST_SERIES,  null], // last in series [yn]
          7 => [parent::CR_BOOLEAN,   'chainId',                                      ], // partseries

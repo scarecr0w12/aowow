@@ -76,9 +76,15 @@ class ItemsetPage extends GenericPage
 
         $infobox = Lang::getInfoBoxForFlags($this->subject->getField('cuFlags'));
 
-        // unavailable (todo (low): set data)
+        // unavailable
         if ($this->subject->getField('cuFlags') & CUSTOM_UNAVAILABLE)
             $infobox[] = Lang::main('unavailable');
+        
+        // expansion data - Note: expansion column not yet added to item_set table
+        // When implemented, this would display the expansion when the item set was introduced
+        // $expansion = $this->subject->getField('expansion');
+        // if ($expansion)
+        //     $infobox[] = Lang::game('expansion').Lang::main('colon').'[expansion='.$expansion.']';
 
         // worldevent
         if ($e = $this->subject->getField('eventId'))

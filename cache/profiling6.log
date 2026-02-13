@@ -1,0 +1,7 @@
+
+04:32:30  [OK]    profiler queue started
+04:32:30          sleeping 3.00s..
+04:32:33          fetching char Selarii (#516) from realm #1
+04:32:33          char did not log in since last update. skipping...
+04:32:33          sleeping 3.00s..
+04:32:36  [INFO]  profiler queue empty - process halted!

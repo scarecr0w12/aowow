@@ -6,7 +6,7 @@ if (!defined('AOWOW_REVISION'))
 
 class Profiler
 {
-    public const PID_FILE     = 'config/pr-queue-pid';
+    public const PID_FILE     = __DIR__ . '/../config/pr-queue-pid';
     public const CHAR_GMFLAGS = 0x1 | 0x8 | 0x10 | 0x20;    // PLAYER_EXTRA_ :: GM_ON | TAXICHEAT | GM_INVISIBLE | GM_CHAT
 
     public const REGIONS = array(                           // see cfg_categories.dbc
@@ -228,16 +228,10 @@ class Profiler
                     continue;
                 }
 
-                // filter dev realms
+                // filter dev realms - allow access to all realms for profiler
                 if ($rData['region'] === 'dev')
                 {
-                    if (CLI || User::isInGroup(U_GROUP_DEV | U_GROUP_ADMIN))
-                        $rData['access'] = U_GROUP_DEV | U_GROUP_ADMIN;
-                    else
-                    {
-                        unset(self::$realms[$rId]);
-                        continue;
-                    }
+                    $rData['access'] = U_GROUP_DEV | U_GROUP_ADMIN;
                 }
             }
         }
@@ -301,11 +295,15 @@ class Profiler
             $response[] = [PR_QUEUE_STATUS_ENDED, 0, 0, PR_QUEUE_ERROR_CHAR];
         else
         {
-            // error out all profiles with status WORKING, that are older than 60sec
-            DB::Aowow()->query('UPDATE ?_profiler_sync SET `status` = ?d, `errorCode` = ?d WHERE `status` = ?d AND `requestTime` < ?d', PR_QUEUE_STATUS_ERROR, PR_QUEUE_ERROR_UNK, PR_QUEUE_STATUS_WORKING, time() - MINUTE);
+            // reset items stuck in WORKING status for more than 5 minutes back to WAITING
+            // this handles cases where the queue process crashes mid-sync
+            DB::Aowow()->query('UPDATE ?_profiler_sync SET `status` = ?d, `errorCode` = 0 WHERE `status` = ?d AND `requestTime` < ?d', PR_QUEUE_STATUS_WAITING, PR_QUEUE_STATUS_WORKING, time() - (5 * MINUTE));
 
             $subjectStatus = DB::Aowow()->select('SELECT `typeId` AS ARRAY_KEY, `status`, `realm`, `errorCode` FROM ?_profiler_sync WHERE `type` = ?d AND `typeId` IN (?a)', $type, $subjectGUIDs);
             $queue         = DB::Aowow()->selectCol('SELECT CONCAT(`type`, ":", `typeId`) FROM ?_profiler_sync WHERE `status` = ?d AND `requestTime` < UNIX_TIMESTAMP() ORDER BY `requestTime` ASC', PR_QUEUE_STATUS_WAITING);
+            
+            // ensure queue is running if there are pending items
+            $hasPending = false;
             foreach ($subjectGUIDs as $guid)
             {
                 if (empty($subjectStatus[$guid]))           // whelp, thats some error..
@@ -313,6 +311,10 @@ class Profiler
                 else if ($subjectStatus[$guid]['status'] == PR_QUEUE_STATUS_ERROR)
                     $response[] = [PR_QUEUE_STATUS_ERROR, 0, 0, $subjectStatus[$guid]['errorCode']];
                 else
+                {
+                    if ($subjectStatus[$guid]['status'] != PR_QUEUE_STATUS_READY)
+                        $hasPending = true;
+                    
                     $response[] = array(
                         $subjectStatus[$guid]['status'],
                         $subjectStatus[$guid]['status'] != PR_QUEUE_STATUS_READY ? Cfg::get('PROFILER_RESYNC_PING') : 0,
@@ -320,7 +322,12 @@ class Profiler
                         0,
                         1                                   // nResycTries - unsure about this one
                     );
+                }
             }
+            
+            // restart queue if there are pending items and it's not running
+            if ($hasPending && !self::queueStatus())
+                self::queueStart();
         }
 
         return $response;

@@ -42,7 +42,7 @@ class GuildPage extends GenericPage
 
         if (count($params) == 1 && intval($params[0]))
         {
-            $this->subject = new LocalGuildList(array(['g.id', intval($params[0])]));
+            $this->subject = new LocalGuildList(array(['id', intval($params[0])]));
             if ($this->subject->error)
                 $this->notFound();
 
@@ -72,7 +72,7 @@ class GuildPage extends GenericPage
                 $this->name = sprintf(Lang::profiler('guildRoster'), $this->subject->getField('name'));
             }
             // 2) not yet synced but exists on realm (wont work if we get passed an urlized name, but there is nothing we can do about it)
-            else if ($team = DB::Characters($this->realmId)->selectRow('SELECT guildid AS realmGUID, name FROM guild WHERE name = ?', Util::ucFirst($this->subjectName)))
+            else if ($this->realmId && ($team = DB::Characters($this->realmId)->selectRow('SELECT guildid AS realmGUID, name FROM guild WHERE name = ?', Util::ucFirst($this->subjectName))))
             {
                 $team['realm']   = $this->realmId;
                 $team['cuFlags'] = PROFILER_CU_NEEDS_RESYNC;
@@ -103,7 +103,7 @@ class GuildPage extends GenericPage
         if ($this->doResync)
             return;
 
-        $this->addScript([SC_JS_FILE, '?data=realms.weight-presets']);
+        $this->addScript([SC_JS_FILE, '?data=enchants.gems.glyphs.itemsets.pets.pet-talents.quick-excludes.realms.statistics.weight-presets.achievements']);
 
         $this->redButtons[BUTTON_RESYNC] = [$this->subjectGUID, 'guild'];
 

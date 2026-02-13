@@ -55,7 +55,7 @@ class EnchantmentList extends BaseType
                 }
             }
 
-            $this->jsonStats[$this->id] = (new StatsContainer)->fromJson($curTpl, true);
+            $this->jsonStats[$this->id] = (new StatsContainer)->fromJson($curTpl, true)->fromEnchantment($curTpl);
         }
 
         if ($relSpells)

@@ -1213,8 +1213,10 @@ qq.extend(qq.UploadHandlerForm.prototype, {
         }
 
         try {
-            response = eval("(" + innerHTML + ")");
+            // Security: Use JSON.parse instead of eval
+            response = JSON.parse(innerHTML);
         } catch(err){
+            this.log("Error parsing JSON response: " + err.message);
             response = {};
         }
 

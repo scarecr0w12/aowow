@@ -529,6 +529,7 @@ class ItemList extends BaseType
         $_subClass     = $this->curTpl['subClass'];
         $_slot         = $this->curTpl['slot'];
         $causesScaling = false;
+        $green         = [];
 
         if (!empty($enhance['r']))
         {
@@ -1682,7 +1683,7 @@ class ItemList extends BaseType
         $json = array(
             'id'          => $this->id,
             'name'        => $this->getField('name', true),
-            'quality'     => ITEM_QUALITY_HEIRLOOM - $this->curTpl['quality'],
+            'quality'     => $this->curTpl['quality'],
             'icon'        => $this->curTpl['iconString'],
             'classs'      => $class,
             'subclass'    => $subclass,

@@ -1638,7 +1638,7 @@ $WH.g_enhanceTooltip = function(tooltip, isStatic, useGets, showSlider, buff, kn
         }
         else {
             // Retrieve tooltip's global information
-            var _ = tooltip.match(/<!--\?(\d+):(\d+):(\d+):(\d+)/);
+            var _ = tooltip.match(/<!--\?(\d+):(\d+):(\d+):(\d+)(?::(\d+))?(?::(\d+))?/);
             if (_ && _[2] != _[3]) {
                 this.slider = Slider.init(showSlider, { minValue: parseInt(_[2]), maxValue: parseInt(_[3]), onMove: $WH.g_tooltipSliderMove.bind(this) });
                 Slider.setValue(this.slider, parseInt(_[4]));
@@ -1679,14 +1679,18 @@ $WH.g_enhanceTooltip = function(tooltip, isStatic, useGets, showSlider, buff, kn
 }
 
 $WH.g_staticTooltipLevelClick = function (div, level, noSlider, buff) {
-    while (div.className.indexOf('tooltip') == -1) {
+    while (div && div.className.indexOf('tooltip') == -1) {
         div = div.parentNode;
+    }
+
+    if (!div) {
+        return; // Safety check: no tooltip parent found
     }
 
     var _ = div.innerHTML;
 
     // Retrieve tooltip's global information
-    _ = _.match(/<!--\?(\d+):(\d+):(\d+):(\d+)/);
+    _ = _.match(/<!--\?(\d+):(\d+):(\d+):(\d+)(?::(\d+))?(?::(\d+))?/);
     if (!_) {
         return; // Error
     }

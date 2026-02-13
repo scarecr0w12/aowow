@@ -203,7 +203,8 @@ CLISetup::registerSetup("sql", new class extends SetupScript
         foreach ($this->skill2cat as $skill => $cat)
             DB::Aowow()->query('UPDATE ?_items SET subClass = ?d WHERE classBak = 9 AND subClassBak = 0 AND requiredSkill = ?d', $cat, $skill);
 
-        // assign slot from onUse spell to item (todo (med): handle multi slot enchantments (like armor kits))
+        // assign slot from onUse spell to item
+        // For single-slot enchantments, use the spell's equippedItemInventoryTypeMask
         DB::Aowow()->query(
             'UPDATE ?_items i
              JOIN   (SELECT `id`, LOG(2, `equippedItemInventoryTypeMask` & ~?d) AS `mask`
@@ -215,6 +216,18 @@ CLISetup::registerSetup("sql", new class extends SetupScript
              WHERE  i.`spellId1` > 0 AND i.`class` = 0 AND i.`subClass` IN (6, -3)',
              1 << INVTYPE_ROBE | 1 << INVTYPE_RANGEDRIGHT   // just unset. _CHEST and _RANGED are set in parallel
          );
+        
+        // For multi-slot enchantments (like armor kits), store the bitmask instead of a single slot
+        // This allows items to be applied to multiple inventory types
+        DB::Aowow()->query(
+            'UPDATE ?_items i
+             JOIN   (SELECT `id`, `equippedItemInventoryTypeMask` AS `mask`
+                     FROM dbc_spell
+                     WHERE `equippedItemInventoryTypeMask` > 0) s
+             ON     s.`id` = i.`spellId1`
+             SET    i.`slot` = -s.`mask`
+             WHERE  i.`spellId1` > 0 AND i.`class` = 0 AND i.`subClass` IN (6, -3) AND i.`slot` = 0'
+        );
 
         // calculate durabilityCosts
         DB::Aowow()->query(

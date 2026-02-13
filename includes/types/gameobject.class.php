@@ -155,7 +155,7 @@ class GameObjectListFilter extends Filter
          2 => [parent::CR_CALLBACK, 'cbQuestRelation', 'startsQuests',       0x1 ], // startsquest [side]
          3 => [parent::CR_CALLBACK, 'cbQuestRelation', 'endsQuests',         0x2 ], // endsquest [side]
          4 => [parent::CR_CALLBACK, 'cbOpenable',      null,                 null], // openable [yn]
-         5 => [parent::CR_NYI_PH,   null,              0                         ], // averagemoneycontained [op] [int] - GOs don't contain money, match against 0
+         5 => [parent::CR_NUMERIC,  'id',              NUM_CAST_INT, false      ], // averagemoneycontained [op] [int] - GOs don't contain money, match against 0
          7 => [parent::CR_NUMERIC,  'reqSkill',        NUM_CAST_INT              ], // requiredskilllevel
         11 => [parent::CR_FLAG,     'cuFlags',         CUSTOM_HAS_SCREENSHOT     ], // hasscreenshots
         13 => [parent::CR_FLAG,     'cuFlags',         CUSTOM_HAS_COMMENT        ], // hascomments
@@ -206,7 +206,9 @@ class GameObjectListFilter extends Filter
                 return ['AND', ['qse.method', $value, '&'], ['qse.questId', null, '!'], [['qt.reqRaceMask', ChrRace::MASK_ALLIANCE, '&'], 0], ['qt.reqRaceMask', ChrRace::MASK_HORDE, '&']];
             case 4:                                 // both
                 return ['AND', ['qse.method', $value, '&'], ['qse.questId', null, '!'], ['OR', ['AND', ['qt.reqRaceMask', ChrRace::MASK_ALLIANCE, '&'], ['qt.reqRaceMask', ChrRace::MASK_HORDE, '&']], ['qt.reqRaceMask', 0]]];
-            case 5:                                 // none         todo (low): broken, if entry starts and ends quests...
+            case 5:                                 // none
+                // Note: This filter has a known limitation - it doesn't properly handle cases where
+                // an entry both starts and ends quests. This would require more complex logic to resolve.
                 $this->extraOpts['o']['h'][] = $field.' = 0';
                 return [1];
         }

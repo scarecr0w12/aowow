@@ -26,7 +26,7 @@ class ProfilerPage extends GenericPage
 
     protected function generateContent()
     {
-        $this->addScript([SC_JS_FILE, '?data=realms']);
+        $this->addScript([SC_JS_FILE, '?data=realms.gems.enchants.itemsets.quick-excludes']);
     }
 
     protected function generatePath() { }

@@ -132,8 +132,9 @@ Listview.templates.enchantment = {
             sortFunc: function(a, b, col) {
                 return $WH.strcmp(g_spell_skills[a.reqskill], g_spell_skills[b.reqskill]) || $WH.strcmp(a.reqskillrank, b.reqskillrank);
             }
-        },
+        }
     ],
+    extraCols: '$fi_getExtraCols(fi_extraCols, 0, 0)',
     getItemLink: function(enchantment) {
         return '?enchantment=' + enchantment.id;
     }

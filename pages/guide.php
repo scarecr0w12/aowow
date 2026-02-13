@@ -392,7 +392,12 @@ class GuidePage extends GenericPage
 
 
         if (User::isInGroup(U_GROUP_STAFF))
-            $buff .= '<input type="button" value="Compare" onclick="alert(\'NYI\');"/>';
+        {
+            // Compare button for staff - allows comparing different versions of guides
+            // TODO (low): Implement guide comparison feature to show differences between revisions
+            // This would allow staff to review changes and maintain guide quality
+            $buff .= '<input type="button" value="Compare" onclick="alert(\'NYI - Guide comparison feature not yet implemented\');"/>';
+        }
 
         $this->name = lang::guide('clTitle', [$this->typeId, $this->subject->getField('title')]);
         $this->extraHTML = $buff;

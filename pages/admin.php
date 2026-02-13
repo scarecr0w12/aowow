@@ -89,6 +89,14 @@ class AdminPage extends GenericPage
                 array_push($this->path, 5);
                 $this->name = 'Reports';
                 break;
+            case 'announcements':
+                $this->reqUGroup = U_GROUP_ADMIN;
+                $this->generator = 'handleAnnouncements';
+                $this->tpl       = 'list-page-generic';
+
+                array_push($this->path, 2, 20);
+                $this->name = 'Announcements';
+                break;
             default:                                        // error out through unset template
         }
 
@@ -300,6 +308,12 @@ class AdminPage extends GenericPage
     private function handleReports() : void
     {
         // todo: handle reports listing
+        //
+    }
+
+    private function handleAnnouncements() : void
+    {
+        // todo: handle announcements listing
         //
     }
 

@@ -40,6 +40,10 @@ endif;
 ?>
     </script>
 
+    <!-- WebGL 3D Model Viewer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="<?=Cfg::get('STATIC_URL'); ?>/js/webgl-viewer.js"></script>
+
 <?php
 if (Cfg::get('ANALYTICS_USER')):
 ?>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL Model Viewer - Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #0066cc;
+        }
+
+        .test-section {
+            background: #222;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #333;
+        }
+
+        .test-section h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #0066cc;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #0052a3;
+        }
+
+        button:active {
+            background: #003d7a;
+        }
+
+        .info {
+            background: #333;
+            padding: 10px;
+            border-radius: 3px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebGL Model Viewer - Test Suite</h1>
+
+        <div class="test-section">
+            <h2>NPC Models</h2>
+            <div class="button-group">
+                <button onclick="testNPC(1)">Thrall (NPC 1)</button>
+                <button onclick="testNPC(2)">Arthas (NPC 2)</button>
+                <button onclick="testNPC(3)">Jaina (NPC 3)</button>
+            </div>
+            <div class="info">Loads NPC models by display ID</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Item Models</h2>
+            <div class="button-group">
+                <button onclick="testItem(1)">Item 1</button>
+                <button onclick="testItem(2)">Item 2</button>
+                <button onclick="testItem(3)">Item 3</button>
+            </div>
+            <div class="info">Loads item models by display ID</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Character Models</h2>
+            <div class="button-group">
+                <button onclick="testCharacter(1, 0)">Human Male</button>
+                <button onclick="testCharacter(1, 1)">Human Female</button>
+                <button onclick="testCharacter(2, 0)">Orc Male</button>
+                <button onclick="testCharacter(2, 1)">Orc Female</button>
+            </div>
+            <div class="info">Loads character models by race and sex</div>
+        </div>
+
+        <div class="test-section">
+            <h2>Controls</h2>
+            <div class="button-group">
+                <button onclick="closeViewer()">Close Viewer</button>
+            </div>
+            <div class="info">
+                <strong>Mouse Controls:</strong><br>
+                Left Click + Drag: Rotate<br>
+                Right Click + Drag: Pan<br>
+                Scroll: Zoom
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { WebGLViewer } from './dist/viewer.js';
+
+        window.testNPC = function(displayId) {
+            ModelViewer.show({
+                type: 1,
+                displayId: displayId,
+                humanoid: 1
+            });
+        };
+
+        window.testItem = function(displayId) {
+            ModelViewer.show({
+                type: 3,
+                displayId: displayId,
+                slot: 1
+            });
+        };
+
+        window.testCharacter = function(race, sex) {
+            ModelViewer.show({
+                type: 16,
+                displayId: 1,
+                race: race,
+                sex: sex
+            });
+        };
+
+        window.closeViewer = function() {
+            ModelViewer.hide();
+        };
+    </script>
+</body>
+</html>

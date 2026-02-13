@@ -32,8 +32,31 @@ AddDefaultCharset utf8
 RewriteEngine on
 # RewriteBase /~user/localPath/     # enable if the rules do not work, when they should
 
+# Don't rewrite static files and directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/static/
+RewriteCond %{REQUEST_URI} !^/cache/
+
 # Mapper-Helper: If you cant provide maps for all locales, redirect the browser
 # RewriteRule ^(.*/?)static/images/wow/maps/(frfr|dede|eses|ruru)/(.*)$ $1static/images/wow/maps/enus/$3 [NC]
+
+# CORS headers for external tooltip access
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|css|json)$">
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "GET, OPTIONS"
+        Header set Access-Control-Allow-Headers "Content-Type, Accept"
+        Header set Access-Control-Max-Age "86400"
+    </FilesMatch>
+    
+    <FilesMatch "^tooltip-api\.php$">
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Header set Access-Control-Allow-Headers "Content-Type, Accept"
+        Header set Access-Control-Max-Age "86400"
+    </FilesMatch>
+</IfModule>
 
 # accept flattened urls | NYI - need more work :x
 #   RewriteRule     ^([a-z0-9\-]+)$                             ?$1       [NC]      # /items                 => ?items

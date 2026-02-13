@@ -6,7 +6,7 @@ if (!defined('AOWOW_REVISION'))
 
 // menuId 0: Item     g_initPath()
 //  tabId 0: Database g_initHeader()
-class ItemPage extends genericPage
+class ItemPage extends GenericPage
 {
     use TrDetailPage;
 

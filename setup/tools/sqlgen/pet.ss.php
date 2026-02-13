@@ -70,12 +70,16 @@ CLISetup::registerSetup("sql", new class extends SetupScript
                     s.name_loc0   = "Tamed Pet Passive (DND)"'
         );
 
-        // add expansion manually
-        /********************/
-        /* TODO: MOVE TO DB */
-        /********************/
-        DB::Aowow()->query('UPDATE ?_pet SET expansion = 1 WHERE id IN (30, 31, 32, 33, 34)');
-        DB::Aowow()->query('UPDATE ?_pet SET expansion = 2 WHERE id IN (37, 38, 39, 41, 42, 43, 44, 45, 46)');
+        // add expansion data from pet_family_expansion mapping
+        // This data should ideally come from the database, but for now we use hardcoded values
+        // based on WoW pet family release dates
+        $expansionData = [
+            1 => [30, 31, 32, 33, 34],      // Expansion 1 (The Burning Crusade)
+            2 => [37, 38, 39, 41, 42, 43, 44, 45, 46]  // Expansion 2 (Wrath of the Lich King)
+        ];
+        
+        foreach ($expansionData as $expansion => $petIds)
+            DB::Aowow()->query('UPDATE ?_pet SET expansion = ?d WHERE id IN (?a)', $expansion, $petIds);
 
         // assign pet spells
         $pets = DB::Aowow()->select(

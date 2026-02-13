@@ -23,7 +23,7 @@ endif;
 ?>
 
 <script type="text/javascript">//<![CDATA[
-    $WH.ge('ic<?=$this->typeId; ?>').appendChild(Icon.create('<?=$this->headIcons[0]; ?>', 2, null, 0, <?=$this->headIcons[1]; ?>));
+    $WH.ge('ic<?=$this->typeId; ?>').appendChild(Icon.create('<?=$this->headIcons[0]; ?>', 2, null, 0<?=$this->headIcons[1] !== '' ? ', '.$this->headIcons[1] : ''; ?>));
     var
         tt  = $WH.ge('tt<?=$this->typeId; ?>'),
 <?php if ($hasBuff): ?>

@@ -23510,7 +23510,13 @@ $WH.cO(g_items, {
         }
     },
     createIcon: function(id, size, num, qty) {
-        return Icon.create(g_items.getIcon(id), size, null, '?item=' + id, num, qty);
+        var icon = Icon.create(g_items.getIcon(id), size, null, '?item=' + id, num, qty);
+        var link = Icon.getLink(icon);
+        if (link) {
+            link.setAttribute('data-tooltip-type', 'item');
+            link.setAttribute('data-tooltip-id', id);
+        }
+        return icon;
     }
 });
 

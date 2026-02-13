@@ -1714,6 +1714,10 @@ function TalentCalc() {
             t,
             ids = [];
 
+        if (typeof g_glyphs == 'undefined') {
+            g_glyphs = {};
+        }
+
         for (var itemId in g_glyphs) {
             ids.push(itemId);
         }

@@ -1,6 +1,13 @@
 # Git
 *.orig
 
+# Environment and secrets
+.env
+setup/.env
+config/config.php
+*.key
+*.pem
+
 # cache
 /cache/template/*
 /cache/alphaMaps/*
@@ -8,6 +15,9 @@
 
 # extract from MPQ
 /setup/mpqdata/*
+/setup/tools/
+/setup/dbc/
+
 
 # generated files
 /static/js/profile_all.js
@@ -18,7 +28,7 @@
 /static/widgets/searchbox.js
 /static/widgets/searchbox/searchbox.html
 /static/download/searchplugins/aowow.xml
-/config/config.php
+/static/models/
 /datasets/*
 !/datasets/zones
 # /datasets/item-scaling

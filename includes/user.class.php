@@ -436,7 +436,7 @@ class User
             $max = 32;
         }
         // AzerothCore
-        else if (CFG_ACC_AUTH_MODE == AUTH_MODE_ACORE)
+        else if (Cfg::get('ACC_AUTH_MODE') == AUTH_MODE_ACORE)
         {
             $min = 2;
             $max = 16;
@@ -593,7 +593,9 @@ class User
         $gUser['upvoteRep']         = Cfg::get('REP_REQ_UPVOTE');
         $gUser['characters']        = self::getCharacters();
         $gUser['excludegroups']     = self::$excludeGroups;
-        $gUser['settings']          = (new StdClass);       // profiler requires this to be set; has property premiumborder (NYI)
+        $gUser['settings']          = (new StdClass);       // profiler requires this to be set
+        // Premium border setting - allows premium users to display special avatar borders
+        // $gUser['settings']->premiumborder = self::getProfilerPremiumBorder();  // TODO: Implement premium border retrieval
 
         if (Cfg::get('DEBUG') && User::isInGroup(U_GROUP_DEV | U_GROUP_ADMIN | U_GROUP_TESTER))
             $gUser['debug'] = true;                         // csv id-list output option on listviews

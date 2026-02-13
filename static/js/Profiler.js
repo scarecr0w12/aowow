@@ -344,49 +344,45 @@ function Profiler() {
         }
 
         var buildData = _talents.getTalentBuilds();
+        var inventory = _inventory.getInventory();
 
-        // @TODO@ Update save format
-        var params = [
-                    'name=' + $WH.urlencode(_profile.name),
-                   'level=' + $WH.urlencode(_profile.level),
-                   'class=' + $WH.urlencode(_profile.classs),
-                    'race=' + $WH.urlencode(_profile.race),
-                  'gender=' + $WH.urlencode(_profile.gender),
-                 'nomodel=' + $WH.urlencode(_profile.nomodel),
-             'talenttree1=' + $WH.urlencode(buildData.spent[0]),
-             'talenttree2=' + $WH.urlencode(buildData.spent[1]),
-             'talenttree3=' + $WH.urlencode(buildData.spent[2]),
-              'activespec=' + $WH.urlencode(buildData.active),
-            'talentbuild1=' + $WH.urlencode(buildData.talents[0]),
-                 'glyphs1=' + $WH.urlencode(buildData.glyphs[0]),
-            'talentbuild2=' + $WH.urlencode(buildData.talents[1]),
-                 'glyphs2=' + $WH.urlencode(buildData.glyphs[1]),
-               'gearscore=' + $WH.urlencode(_profile.gearscore),
-                    'icon=' + $WH.urlencode(_profile.icon),
-                  'public=' + $WH.urlencode(_profile.published)
-        ];
+        var saveData = {
+            name: _profile.name,
+            level: _profile.level,
+            class: _profile.classs,
+            race: _profile.race,
+            gender: _profile.gender,
+            nomodel: _profile.nomodel,
+            talenttree1: buildData.spent[0],
+            talenttree2: buildData.spent[1],
+            talenttree3: buildData.spent[2],
+            activespec: buildData.active,
+            talentbuild1: buildData.talents[0],
+            glyphs1: buildData.glyphs[0],
+            talentbuild2: buildData.talents[1],
+            glyphs2: buildData.glyphs[1],
+            gearscore: _profile.gearscore,
+            icon: _profile.icon,
+            public: _profile.published,
+            inventory: inventory
+        };
 
         if (_profile.description) {
-            params.push('description=' + $WH.urlencode(_profile.description));
+            saveData.description = _profile.description;
         }
 
         if (_profile.source) {
-            params.push('source=' + _profile.source);
+            saveData.source = _profile.source;
         }
 
         if (_profile.copy) {
-            params.push('copy=' + _profile.copy);
-        }
-
-        var inventory = _inventory.getInventory();
-
-        for (var i in inventory) {
-            params.push('inv[]=' + i + ',' + inventory[i].join(','));
+            saveData.copy = _profile.copy;
         }
 
         new Ajax('?profile=save&id=' + _profile.id, {
             method: 'POST',
-            params: params.join('&'),
+            params: JSON.stringify(saveData),
+            headers: { 'Content-Type': 'application/json' },
             onSuccess: function (xhr, opt) {
                 var result = parseInt(xhr.responseText);
 
@@ -2569,7 +2565,11 @@ function ProfilerStatistics(_parent) {
                     var
                         raceData  = g_statistics.race[_profile.race],
                         classData = g_statistics.classs[_profile.classs],
-                        levelData = g_statistics.combo[_profile.classs][_profile.level];
+                        levelData = g_statistics.combo[_profile.classs] && g_statistics.combo[_profile.classs][_profile.level];
+
+                    if (!levelData) {
+                        return {};
+                    }
 
                     return {
                         mleatkpwr: [classData[0][2], 'percentOf', ['agi', (classData[0][2] ? (classData[0][0] / (classData[0][1] ? 2 : 1)) : 0)]],
@@ -2608,7 +2608,11 @@ function ProfilerStatistics(_parent) {
 
                     var
                         classData = g_statistics.classs[_profile.classs],
-                        levelData = g_statistics.combo[_profile.classs][_profile.level];
+                        levelData = g_statistics.combo[_profile.classs] && g_statistics.combo[_profile.classs][_profile.level];
+
+                    if (!levelData) {
+                        return {};
+                    }
 
                     return {
                         mana: [15, 'percentOf', ['int', -280]],
@@ -2631,7 +2635,12 @@ function ProfilerStatistics(_parent) {
                             // taken from TrinityCore//Player::OCTRegenHPPerSpirit(), which is taken from PaperDollFrame script
                             var
                                 spiBase = _statistics.spi.subtotal[0],
-                                spiMore = _statistics.spi.subtotal[1]
+                                spiMore = _statistics.spi.subtotal[1],
+                                levelData = g_statistics.combo[_profile.classs] && g_statistics.combo[_profile.classs][_profile.level];
+
+                            if (!levelData) {
+                                return 0;
+                            }
 
                             if (spiBase > 50) {
                                 spiMore += spiBase - 50;
@@ -2639,8 +2648,8 @@ function ProfilerStatistics(_parent) {
                             }
 
                             return Math.round(
-                                (spiBase * g_statistics.combo[_profile.classs][_profile.level][10]) +
-                                (spiMore * g_statistics.combo[_profile.classs][_profile.level][11]));
+                                (spiBase * levelData[10]) +
+                                (spiMore * levelData[11]));
                         }],
                         spimanargn: [5, 'functionOf', function () {
                             return (0.001 + Math.sqrt(_statistics['int'].total) * _statistics.spi.total * g_statistics.level[_profile.level]);
@@ -3408,8 +3417,10 @@ function ProfilerStatistics(_parent) {
 
         var
             classData = g_statistics.classs[_profile.classs],
-            levelData = g_statistics.combo[_profile.classs][_profile.level],
-            baseAttribs = {
+            levelData = g_statistics.combo[_profile.classs] && g_statistics.combo[_profile.classs][_profile.level];
+
+        if (levelData) {
+            var baseAttribs = {
                 str:       levelData[0],
                 agi:       levelData[1],
                 sta:       levelData[2],
@@ -3424,11 +3435,12 @@ function ProfilerStatistics(_parent) {
                 def:       _profile.level * 5
             };
 
-        baseAttribs[_checkPowerType()] = levelData[6];
+            baseAttribs[_checkPowerType()] = levelData[6];
 
-        _addModifiers('class', _profile.classs, baseAttribs);
-        _addModifiers('class', _profile.classs, classData[9]);
-        _addModifiers('class', _profile.classs, classData[10]);
+            _addModifiers('class', _profile.classs, baseAttribs);
+            _addModifiers('class', _profile.classs, classData[9]);
+            _addModifiers('class', _profile.classs, classData[10]);
+        }
 
         // Modifiers from tradeskills
         _removeAllModifiers('skill');
@@ -6467,7 +6479,16 @@ function ProfilerInventory(_parent) {
                     return;
                 }
 
-                var a = eval(text);
+                // Security: Use JSON.parse instead of eval
+                var a;
+                try {
+                    a = JSON.parse(text);
+                } catch (e) {
+                    console.error('Failed to parse search results:', e);
+                    $WH.st(_searchMsg, $WH.sprintf(LANG.su_noresults, opt.search));
+                    _searchMsg.className = 'q10';
+                    return;
+                }
                 if (search == opt.search && a.length == 3 && a[1].length) {
                     for (var i = 0, len = a[1].length; i < len; ++i) {
                         var row       = {};
@@ -7572,7 +7593,7 @@ function ProfilerCompletion(_parent) {
                 continue;
             }
 
-            if ((!_opt.compute || _opt.compute(row, data[i])) && data[i]) {
+            if (data && ((!_opt.compute || _opt.compute(row, data[i])) && data[i])) {
                 row.completed = (data[i].getTime ? data[i] : (_opt.showQuantity ? data[i] : 1));
                 hasData = true;
             }

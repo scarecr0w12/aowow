@@ -1857,10 +1857,26 @@ function fi_getExtraCols(wt, gm, pu) {
         if (a && a.name && a.type == 'num' && a.name != 'buyprice') {
             var b = {
                 id:      a.name,
+                type:    'num',
                 value:   a.name,
                 name:    (LANG.traits[a.name] ? LANG.traits[a.name][2] : langref[a.name]),
                 tooltip: (LANG.traits[a.name] ? LANG.traits[a.name][0] : langref[a.name]),
-                before:  (a.before ? a.before: 'source')
+                before:  (a.before ? a.before: 'source'),
+                getValue: (function(statName) {
+                    return function (item) {
+                        return item[statName] || 0;
+                    };
+                })(a.name),
+                compute: (function(statName) {
+                    return function (item, td) {
+                        td.innerHTML = item[statName] || 0;
+                    };
+                })(a.name),
+                sortFunc: (function(statName) {
+                    return function (a, b, col) {
+                        return $WH.strcmp((a[statName] || 0), (b[statName] || 0));
+                    };
+                })(a.name)
             };
 
             // Fix display of decimal columns
