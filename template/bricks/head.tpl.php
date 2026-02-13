@@ -1,8 +1,11 @@
     <title><?=Util::htmlEscape(implode(' - ', $this->title)); ?></title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="SHORTCUT ICON" href="<?=Cfg::get('STATIC_URL'); ?>/images/logos/favicon.ico" />
     <link rel="search" type="application/opensearchdescription+xml" href="<?=Cfg::get('STATIC_URL'); ?>/download/searchplugins/aowow.xml" title="Aowow" />
+    <!-- Modern CSS Framework -->
+    <link rel="stylesheet" type="text/css" href="<?=Cfg::get('STATIC_URL'); ?>/css/modern.css" />
 <?php
 foreach ($this->css as [$type, $css]):
     if ($type == SC_CSS_FILE):
