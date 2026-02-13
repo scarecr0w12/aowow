@@ -1,22 +1,45 @@
-<?php $this->brick('header'); ?>
+<?php $this->brick('modern-header'); ?>
 
-    <div class="main" id="main">
-        <div class="main-precontents" id="main-precontents"></div>
-        <div class="main-contents" id="main-contents">
+    <main>
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="detail-breadcrumb">
+                <div class="detail-breadcrumb-item">
+                    <a href="?" class="detail-breadcrumb-link">Home</a>
+                </div>
+                <div class="detail-breadcrumb-item">
+                    <a href="?spells" class="detail-breadcrumb-link">Spells</a>
+                </div>
+                <div class="detail-breadcrumb-item detail-breadcrumb-current">
+                    <?=$this->name; ?>
+                </div>
+            </div>
 
+            <!-- Detail Page Layout -->
+            <div class="detail-page-modern">
+                <!-- Main Content Area -->
+                <div class="detail-page-main">
+                    <!-- Header Section -->
+                    <div class="detail-header">
+                        <div class="detail-header-icon" id="spell-icon"></div>
+                        <div class="detail-header-content">
+                            <h1 class="detail-header-title"><?=$this->name; ?></h1>
+                            <div class="detail-header-meta">
 <?php
-    $this->brick('announcement');
-
-    $this->brick('pageTemplate');
-
-    $this->brick('infobox');
+    $this->brick('tooltip');
 ?>
+                            </div>
+                            <div class="detail-header-actions">
+                                <button class="btn btn-primary btn-sm">Add to Favorites</button>
+                                <button class="btn btn-secondary btn-sm">Share</button>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="text">
-
-<?php $this->brick('redButtons'); ?>
-
-                <h1 class="h1-icon"><?=$this->name; ?></h1>
+                    <!-- Description Section -->
+                    <div class="detail-section">
+                        <h2 class="detail-section-title">Description</h2>
+                        <div class="detail-description">
 
 <?php
 $this->brick('tooltip');
@@ -283,7 +306,7 @@ endforeach;
                     <tr>
                         <th><?=Lang::game('flags');?></th>
                             <td colspan="3" style="line-height:17px">
-                                <ul style="margin:0"><?php
+                                <ul style="margin:0; list-style: none; padding: 0;"><?php
 foreach ($this->attributes as $cr):
     echo '<li><a href="?spells&filter=cr='.$cr.';crs=1;crv=0">'.Lang::spell('attributes', $cr).'</a></li>';
 endforeach;
@@ -292,16 +315,53 @@ endforeach;
                     </tr>
                 </table>
 
-                <h2 class="clear"><?=Lang::main('related');?></h2>
-            </div>
+                        </div>
+                    </div>
 
+                    <!-- Related Section -->
+                    <div class="detail-section">
+                        <h2 class="detail-section-title"><?=Lang::main('related');?></h2>
+                        <div id="related-items-container">
 <?php
 $this->brick('lvTabs', ['relTabs' => true]);
+?>
+                        </div>
+                    </div>
 
+                    <!-- Contribute Section -->
+                    <div class="detail-section">
+<?php
 $this->brick('contribute');
 ?>
-            <div class="clear"></div>
-        </div><!-- main-contents -->
-    </div><!-- main -->
+                    </div>
+                </div>
 
-<?php $this->brick('footer'); ?>
+                <!-- Sidebar -->
+                <aside class="detail-page-sidebar">
+                    <!-- Quick Info Card -->
+                    <div class="detail-sidebar-card">
+                        <div class="detail-sidebar-card-title">Quick Info</div>
+                        <div class="detail-sidebar-info">
+                            <div class="detail-sidebar-info-item">
+                                <span class="detail-sidebar-info-label">Spell ID:</span>
+                                <span class="detail-sidebar-info-value"><?=$this->id; ?></span>
+                            </div>
+<?php
+    $this->brick('redButtons');
+?>
+                        </div>
+                    </div>
+
+                    <!-- Infobox -->
+<?php
+    $this->brick('infobox');
+?>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+<?php $this->brick('modern-footer'); ?>
+
+<script src="<?=Cfg::get('STATIC_URL'); ?>/js/modern-ui.js"></script>
+<script src="<?=Cfg::get('STATIC_URL'); ?>/js/performance.js"></script>
