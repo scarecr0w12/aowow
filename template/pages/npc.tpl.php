@@ -10,8 +10,6 @@
     $this->brick('announcement');
 
     $this->brick('pageTemplate');
-
-    $this->brick('infobox');
 ?>
 
             <div class="text">
@@ -125,6 +123,11 @@ $this->brick('contribute');
 
             <div class="clear"></div>
                 </div><!-- main-contents -->
+
+<?php
+    $this->brick('infobox');
+?>
+
             </div><!-- main -->
         </div>
     </main>
