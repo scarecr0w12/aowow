@@ -248,8 +248,5 @@
         <div id="noscript-bg"></div>
         <div id="noscript-text"><b><?=Lang::main('jsError'); ?></b></div>
     </noscript>
-
-    <script src="<?=Cfg::get('STATIC_URL'); ?>/js/modern-ui.js"></script>
-    <script src="<?=Cfg::get('STATIC_URL'); ?>/js/performance.js"></script>
 </body>
 </html>

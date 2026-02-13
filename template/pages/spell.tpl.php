@@ -362,6 +362,3 @@ $this->brick('contribute');
     </main>
 
 <?php $this->brick('modern-footer'); ?>
-
-<script src="<?=Cfg::get('STATIC_URL'); ?>/js/modern-ui.js"></script>
-<script src="<?=Cfg::get('STATIC_URL'); ?>/js/performance.js"></script>
