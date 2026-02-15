@@ -445,7 +445,7 @@ function Profiler() {
     };
 
     this.signature = function () {
-        if (!_isArmoryProfile() || !g_user.id || !g_user.premium) {
+        if (!_isArmoryProfile() || !g_user.id) {
             return;
         }
 
@@ -4562,52 +4562,7 @@ function ProfilerInventory(_parent) {
 
         _container.parentNode.parentNode.insertBefore(_, _container.parentNode);
 
-        // custom: hide the swfObject, when displaying tooltips only static tooltips with .show are needed
-        (function (){
-            var
-                oldHide = $WH.Tooltip.hide;
-                oldShow = $WH.Tooltip.show;
-
-            $WH.Tooltip.hide = function (){
-                oldHide.apply(this);
-
-                var a = $WH.ge(_swfModel.id);
-                if (a) {
-                    a.style.visibility = "visible"
-                }
-            }
-
-            $WH.Tooltip.show = function (_this, text, paddX, paddY, spanClass, text2) {
-                oldShow.apply(this, [_this, text, paddX, paddY, spanClass, text2]);
-
-                if ($WH.Tooltip.tooltip.style.visibility != "visible") {
-                    return;
-                }
-
-                var w = $WH.ge(_swfModel.id);
-                if (!w) {
-                    return
-                }
-
-                try {
-                    var v = w.getBoundingClientRect();
-                    var u = $WH.Tooltip.tooltip.getBoundingClientRect()
-                }
-                catch (y) {
-                    return
-                }
-
-                var a = true;
-                a &= (u.bottom > v.top && u.top < v.bottom);
-                a &= (u.right > v.left && u.left < v.right);
-
-                var i = a ? "hidden" : "visible";
-                if (i != w.style.visibility) {
-                    w.style.visibility = i
-                }
-            }
-        })(window || {});
-        // !custom
+        // WebGL: no tooltip-swf visibility hack needed
     }
 
     function _updateModel(slotId, refresh) {
@@ -4649,54 +4604,40 @@ function ProfilerInventory(_parent) {
         }
 
         if (!_mvInited || refresh) {
-            var flashVars = {
-                model: g_file_races[_profile.race] + g_file_genders[_profile.gender],
-                modelType: 16,
-                equipList: equipList,
-                sk: _profile.skincolor,
-                ha: _profile.hairstyle,
-                hc: _profile.haircolor,
-                fa: _profile.facetype,
-                fh: _profile.features,
-                fc: _profile.haircolor,
-                mode: 3,
-                // contentPath: 'http://static.wowhead.com/modelviewer/'
-                contentPath: g_staticUrl + '/modelviewer/'
-            };
+            /* ---- WebGL character viewer (replaces Flash SWF) ---- */
+            var modelEl = $WH.ge(_swfModel.id);
+            if (modelEl && typeof WoWModelViewer !== 'undefined') {
+                modelEl.innerHTML = '';
+                modelEl.style.width  = '100%';
+                modelEl.style.height = '100%';
 
-            var params = {
-                wmode: 'direct',                            // aowow: was 'opaque'; doesn't draw with this
-                quality: 'high',
-                allowscriptaccess: 'always',
-                allowfullscreen: true,
-                menu: false,
-                bgcolor: '#141414'
-            };
+                if (window._profilerWebGLViewer) {
+                    window._profilerWebGLViewer.dispose();
+                }
 
-            var attributes = {
-                style: 'outline: none'
-            };
+                window._profilerWebGLViewer = new WoWModelViewer(modelEl, { background: 0x141414 });
 
-            swfobject.embedSWF(g_staticUrl + '/modelviewer/ZAMviewerfp11.swf', _swfModel.id, '100%', '100%', '10.0.0', g_staticUrl + '/modelviewer/expressInstall.swf', flashVars, params, attributes);
-            // swfobject.embedSWF('http://static.wowhead.com/modelviewer/ZAMviewerfp11.swf', _swfModel.id, '100%', '100%', '10.0.0', 'http://static.wowhead.com/modelviewer/expressInstall.swf', flashVars, params, attributes);
+                var raceName = g_file_races[_profile.race] || 'human';
+                var sexName  = g_file_genders[_profile.gender] || 'male';
+
+                window._profilerWebGLViewer.loadCharacter(raceName, sexName, equipList, {
+                    sk: _profile.skincolor,
+                    ha: _profile.hairstyle,
+                    hc: _profile.haircolor,
+                    fa: _profile.facetype,
+                    fh: _profile.features,
+                    fc: _profile.haircolor
+                });
+            }
 
             _mvInited = true;
         }
-        /*
-            aowow: the idea of this is to directly access the swf.
-            though ZAMviewerfp11.swf is unpredictable af
-
-            custom: try/catch; check for empty equipList
-        */
         else {
-            _swfModel = $WH.ge(_swfModel.id);
-
-            if (_swfModel.clearSlots) {
-                _swfModel.setAppearance(_profile.hairstyle, _profile.haircolor, _profile.facetype, _profile.skincolor, _profile.features, _profile.haircolor);
-
-                try { _swfModel.clearSlots(emptySlots); } catch (x) { }
-                if (equipList.length)
-                    _swfModel.attachList(equipList);
+            /* For incremental updates, reload the character model */
+            if (window._profilerWebGLViewer) {
+                var raceName = g_file_races[_profile.race] || 'human';
+                var sexName  = g_file_genders[_profile.gender] || 'male';
+                window._profilerWebGLViewer.loadCharacter(raceName, sexName, equipList);
             }
         }
     }

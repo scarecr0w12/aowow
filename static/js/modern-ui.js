@@ -36,6 +36,13 @@ const ModernUI = (() => {
       });
     });
 
+    // Prevent default on nav dropdown links that point to "#"
+    document.querySelectorAll('.header-nav-link-has-dropdown[href="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+      });
+    });
+
     // Close user menu when clicking outside
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.header-user-menu')) {

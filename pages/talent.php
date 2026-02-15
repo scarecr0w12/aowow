@@ -36,7 +36,6 @@ class TalentPage extends GenericPage
             $this->addScript(
                 [SC_JS_FILE,  '?data=pet-talents.pets&locale='.Lang::getLocale()->value.'&t='.$_SESSION['dataKey']],
                 [SC_JS_FILE,  'js/petcalc.js'],
-                [SC_JS_FILE,  'js/swfobject.js'],
                 [SC_CSS_FILE, 'css/petcalc.css']
             );
         else

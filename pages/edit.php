@@ -43,6 +43,10 @@ class EditPage extends GenericPage
         $this->name = Lang::guide('editor');
     }
 
+    protected function generatePath() : void {}
+
+    protected function generateTitle() : void {}
+
     protected function generateContent() : void
     {
         $this->editorFields = array(

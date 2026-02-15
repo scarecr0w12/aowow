@@ -186,7 +186,7 @@ function pr_updateStatus(page, div, id, request, tryAgain)
 
     new Ajax('?' + page + '=status&id=' + id + '&t=' + (new Date().getTime()), {
         onSuccess: function(xhr, opt) {
-            var text = xhr.responseText;
+            var text = xhr.responseText.trim();
 
             if (text.charAt(0) != '[' || text.charAt(text.length - 1) != ']') {
                 return;

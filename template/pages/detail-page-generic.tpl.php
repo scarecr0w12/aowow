@@ -1,25 +1,20 @@
-<?php $this->brick('modern-header'); ?>
+<?php $this->brick('header'); ?>
 
-    <main>
-        <div class="container">
-    <div class="main" id="main">
-        <div class="main-precontents" id="main-precontents"></div>
-        <div class="main-contents" id="main-contents">
+    <div id="main-precontents" class="detail-breadcrumb-bar"></div>
 
-<?php
-    $this->brick('announcement');
+<?php $this->brick('announcement'); ?>
+<?php $this->brick('pageTemplate'); ?>
 
-    $this->brick('pageTemplate');
-
-    $this->brick('infobox');
-?>
-
+    <div class="detail-grid" id="main">
+        <!-- Main Content -->
+        <div class="detail-grid-main detail-content-card" id="main-contents">
             <div class="text">
 <?php
     $this->brick('headIcons');
-
-    $this->brick('redButtons');
 ?>
+                <div class="detail-actions-bar">
+<?php $this->brick('redButtons'); ?>
+                </div>
 
                 <h1<?=(isset($this->expansion) ? ' class="h1-icon"><span class="icon-'.$this->expansion.'-right">'.$this->name.'</span>' : '>'.$this->name); ?></h1>
 
@@ -110,12 +105,12 @@ endif;
 ?>
 
             <div class="clear"></div>
-        </div><!-- main-contents -->
-    </div><!-- main -->
-        </div>
-    </main>
+        </div><!-- detail-grid-main -->
 
-<?php $this->brick('modern-footer'); ?>
+        <!-- Sidebar -->
+        <aside class="detail-grid-sidebar">
+<?php $this->brick('infobox'); ?>
+        </aside>
+    </div><!-- detail-grid -->
 
-<script src="<?=Cfg::get('STATIC_URL'); ?>/js/modern-ui.js"></script>
-<script src="<?=Cfg::get('STATIC_URL'); ?>/js/performance.js"></script>
+<?php $this->brick('footer'); ?>

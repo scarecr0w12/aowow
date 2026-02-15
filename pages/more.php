@@ -20,7 +20,7 @@ class MorePage extends GenericPage
     protected $path          = [];
     protected $tabId         = 0;
     protected $mode          = CACHE_TYPE_NONE;
-    protected $scripts       = [[SC_JS_FILE, 'js/swfobject.js']];
+    protected $scripts       = [];
 
     private   $page          = [];
     private   $req2priv      = array(

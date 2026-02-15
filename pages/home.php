@@ -10,6 +10,7 @@ class HomePage extends GenericPage
     protected $scripts  = array(
         [SC_JS_FILE,    'js/home.js'],
         [SC_CSS_FILE,   'css/home.css'],
+        [SC_CSS_FILE,   'css/home.modern.css'],
         [SC_CSS_STRING, '.announcement { margin: auto; max-width: 1200px; padding: 0px 15px 15px 15px }']
     );
 

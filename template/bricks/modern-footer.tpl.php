@@ -31,3 +31,12 @@
         </div>
     </div>
 </footer>
+
+<noscript>
+    <div id="noscript-bg"></div>
+    <div id="noscript-text"><?=Lang::main('noJScript'); ?></div>
+</noscript>
+
+<script type="text/javascript">if (typeof DomContentLoaded !== 'undefined') { DomContentLoaded.now(); }</script>
+</body>
+</html>

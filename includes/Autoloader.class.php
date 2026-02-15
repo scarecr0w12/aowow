@@ -133,6 +133,10 @@ class Autoloader
             'AjaxGuild'         => 'includes/ajaxHandler/guild.class.php',
             'AjaxArenaTeam'     => 'includes/ajaxHandler/arenateam.class.php',
             'AjaxFilter'        => 'includes/ajaxHandler/filter.class.php',
+            'AjaxSignature'     => 'includes/ajaxHandler/signature.class.php',
+            
+            // Page classes
+            'SignaturePage'     => 'pages/signature.php',
             
             // SmartAI components (special case - SmartHelper trait must be loaded first)
             'SmartAI'           => 'includes/components/SmartAI/SmartAI.class.php',

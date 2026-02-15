@@ -376,6 +376,7 @@ $WH.ge = function(z) {
 
 // Get elements by tag name
 $WH.gE = function(z, y) {
+    if (!z) return [];
     return z.getElementsByTagName(y);
 }
 

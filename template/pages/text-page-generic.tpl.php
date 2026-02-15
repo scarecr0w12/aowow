@@ -1,10 +1,9 @@
-<?php $this->brick('modern-header'); ?>
+<?php $this->brick('header'); ?>
 
-    <main>
-        <div class="container">
-    <div class="main" id="main">
-        <div class="main-precontents" id="main-precontents"></div>
-        <div class="main-contents" id="main-contents">
+    <div id="main-precontents" class="detail-breadcrumb-bar"></div>
+
+    <div class="detail-grid" id="main">
+        <div class="detail-grid-main detail-content-card" id="main-contents">
 
 <?php
 $this->brick('announcement');
@@ -31,7 +30,8 @@ if ($this->notFound):
 ?>
                 <script type="text/javascript">//<![CDATA[
                     pr_updateStatus('<?=$this->doResync[0]; ?>', $WH.ge('roster-status'), <?=$this->doResync[1]; ?>, 1);
-                    pr_setRegionRealm($WH.gE($WH.ge('topbar'), 'form')[0], '<?=$this->region; ?>', '<?=$this->realm; ?>');
+                    var _topbar = $WH.ge('topbar');
+                    if (_topbar) pr_setRegionRealm($WH.gE(_topbar, 'form')[0], '<?=$this->region; ?>', '<?=$this->realm; ?>');
                 //]]></script>
 <?php
     endif;
@@ -68,12 +68,7 @@ else:
 
 endif;
 ?>
-        </div><!-- main-contents -->
-    </div><!-- main -->
-        </div>
-    </main>
+        </div><!-- detail-grid-main -->
+    </div><!-- detail-grid -->
 
-<?php $this->brick('modern-footer'); ?>
-
-<script src="<?=Cfg::get('STATIC_URL'); ?>/js/modern-ui.js"></script>
-<script src="<?=Cfg::get('STATIC_URL'); ?>/js/performance.js"></script>
+<?php $this->brick('footer'); ?>

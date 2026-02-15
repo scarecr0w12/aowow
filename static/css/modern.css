@@ -1,679 +1,861 @@
 /* ============================================
    MODERN AOWOW STYLESHEET
-   Main entry point for all modular CSS files
+   Dark theme + modern enhancements overlay
+   Works WITH existing aowow.css/basic.css
    ============================================ */
 
-/* Import Design Tokens & Variables */
+/* Import Design Tokens */
 @import url('./variables.css');
 
-/* Import CSS Reset */
-@import url('./reset.css');
-
-/* Import Typography */
-@import url('./typography.css');
-
-/* Import Layout System */
-@import url('./layout.css');
-
-/* Import Components */
-@import url('./components.css');
-
-/* Import Utilities */
-@import url('./utilities.css');
-
-/* Import Responsive Design */
-@import url('./responsive.css');
-
-/* Import Page-Specific Styles */
+/* Import Header Component */
 @import url('./header.css');
-@import url('./home.modern.css');
-@import url('./detail-page.modern.css');
-@import url('./list-page.modern.css');
 
 /* ============================================
-   AOWOW-SPECIFIC OVERRIDES & ENHANCEMENTS
+   BASE: Dark theme for html/body
    ============================================ */
 
-/* Override old styles with !important */
-* {
-  box-sizing: border-box !important;
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
 
 html, body {
   background-color: var(--color-bg) !important;
   color: var(--color-text) !important;
-  font-family: var(--font-family-base) !important;
+  font-family: var(--font-family-base);
 }
 
-/* Page wrapper */
 body {
-  min-height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
-  background: var(--color-bg) !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
+/* ============================================
+   LAYOUT: Container + Main structure
+   ============================================ */
+
+/* Container from modern header/footer */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+/* Main content wrapper produced by header brick */
 main {
-  flex: 1 !important;
+  padding: 20px 0;
 }
 
-/* Hide old layout elements */
+/* Old layout wrappers - hide/neutralize */
+.layout,
+.layout-inner {
+  min-width: 0;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Hide old header/nav elements (replaced by modern header) */
+#header,
 .toplinks,
-.footer,
-.home-wrapper,
-.home-logo,
-.home-search,
-.home-menu,
-.home-oneliner,
-.home-featuredbox,
-.pad,
-.pad2,
-.pad3 {
+.toptabs,
+.topbar {
   display: none !important;
 }
 
-/* Override old main content styles */
-.main {
-  background: transparent !important;
-  border: none !important;
-  padding: var(--spacing-8) 0 !important;
-  margin: 0 !important;
-  width: 100% !important;
-  display: grid !important;
-  grid-template-columns: 1fr 350px !important;
-  gap: var(--spacing-8) !important;
-  align-items: start !important;
+/* ============================================
+   DETAIL PAGE GRID LAYOUT
+   ============================================ */
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: var(--spacing-6);
+  padding: var(--spacing-4) 0;
 }
 
-.main-contents {
-  background: transparent !important;
-  padding: 0 !important;
-  margin: 0 !important;
+/* When no sidebar is present, use single column */
+.detail-grid:not(:has(.detail-grid-sidebar)) {
+  grid-template-columns: 1fr;
+}
+
+.detail-grid-main {
+  min-width: 0;
+}
+
+.detail-grid-sidebar {
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+}
+
+/* Infobox inside sidebar: remove float, fill width */
+.detail-grid-sidebar .infobox {
+  float: none !important;
   width: 100% !important;
-  display: block !important;
-  clear: both !important;
-  grid-column: 1 / -1 !important;
+  margin: 0 0 var(--spacing-4) 0 !important;
+}
+
+/* Breadcrumb bar */
+.detail-breadcrumb-bar {
+  padding: var(--spacing-2) 0;
+  margin-bottom: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Actions bar for red buttons */
+.detail-actions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+}
+
+.detail-actions-bar .button-red {
+  margin-right: 0;
+}
+
+/* Content card */
+.detail-content-card {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  min-height: 550px;
+}
+
+/* Section separators */
+.detail-section {
+  margin-bottom: var(--spacing-6);
+}
+
+.detail-section + .detail-section {
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Tooltip section wrapper */
+.detail-tooltip-section {
+  margin-bottom: var(--spacing-6);
+}
+
+/* Alert box for unavailable items etc */
+.detail-alert-warning {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--color-danger-600);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3) var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  color: var(--color-danger-400);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Responsive: stack on mobile */
+@media (max-width: 1024px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-grid-sidebar {
+    position: static;
+    order: -1;
+  }
+}
+
+/* ============================================
+   MAIN CONTENT AREA (legacy support)
+   ============================================ */
+
+.main {
+  position: relative;
 }
 
 .main-precontents {
-  display: none !important;
+  background: var(--color-bg-tertiary);
+  padding: 5px;
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
 }
 
-/* Fix layout for detail pages - make text content main column */
-.main > .text {
-  display: block !important;
-  width: 100% !important;
-  float: none !important;
-  clear: both !important;
-  grid-column: 1 !important;
-  grid-row: 1 !important;
-  padding: 0 !important;
-  margin: 0 !important;
+.main-contents {
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  padding: 20px;
+  min-height: 550px;
+  border-radius: 8px;
 }
 
-/* Infobox goes to sidebar */
-.main > .infobox {
-  grid-column: 2 !important;
-  grid-row: 1 !important;
-  width: 100% !important;
-  float: none !important;
-  margin: 0 !important;
-  padding: var(--spacing-6) !important;
-}
-
-/* lvTabs spans full width below */
-.main > .lvTabs {
-  grid-column: 1 / -1 !important;
-  width: 100% !important;
-  float: none !important;
-  clear: both !important;
-  margin-top: var(--spacing-8) !important;
-}
-
-/* Contribute spans full width */
-.main > .contribute {
-  grid-column: 1 / -1 !important;
-  width: 100% !important;
-  float: none !important;
-  clear: both !important;
-  margin-top: var(--spacing-8) !important;
-}
-
-/* Style text content area */
+/* .text content area */
 .text {
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  color: var(--color-text) !important;
+  color: var(--color-text);
 }
 
 .text h1 {
-  font-size: var(--font-size-4xl) !important;
-  font-weight: var(--font-weight-bold) !important;
-  color: var(--color-text) !important;
-  margin-bottom: var(--spacing-6) !important;
-  margin-top: 0 !important;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 16px;
 }
 
 .text h2 {
-  font-size: var(--font-size-2xl) !important;
-  font-weight: var(--font-weight-bold) !important;
-  color: var(--color-text) !important;
-  margin-top: var(--spacing-8) !important;
-  margin-bottom: var(--spacing-4) !important;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-top: 24px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .text h3 {
-  font-size: var(--font-size-xl) !important;
-  font-weight: var(--font-weight-semibold) !important;
-  color: var(--color-text) !important;
-  margin-top: var(--spacing-6) !important;
-  margin-bottom: var(--spacing-3) !important;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-top: 16px;
+  margin-bottom: 8px;
 }
 
-.text p {
-  color: var(--color-text-secondary) !important;
-  line-height: var(--line-height-relaxed) !important;
-  margin-bottom: var(--spacing-4) !important;
+/* ============================================
+   LINKS
+   ============================================ */
+
+a {
+  color: var(--color-accent-400);
+  transition: color 150ms ease;
 }
 
-.text a {
-  color: var(--color-accent-400) !important;
-  text-decoration: none !important;
+a:hover {
+  color: var(--color-accent-300);
 }
 
-.text a:hover {
-  color: var(--color-accent-300) !important;
-  text-decoration: underline !important;
-}
+/* ============================================
+   INFOBOX (Quick Facts sidebar)
+   ============================================ */
 
-/* Table styling */
-table {
-  width: 100% !important;
-  border-collapse: collapse !important;
-  background-color: var(--color-bg-secondary) !important;
+.infobox {
+  float: right;
+  margin: 0 0 10px 15px;
+  background-color: var(--color-bg-tertiary) !important;
   border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-lg) !important;
-  overflow: hidden !important;
-  margin: var(--spacing-6) 0 !important;
+  border-radius: 8px;
+  padding-bottom: 12px;
+  width: auto;
 }
 
-thead {
-  background-color: var(--color-bg-tertiary) !important;
-}
-
-th {
-  padding: var(--spacing-3) !important;
-  text-align: left !important;
-  font-weight: var(--font-weight-semibold) !important;
-  color: var(--color-text) !important;
-  border-bottom: 2px solid var(--color-border) !important;
-}
-
-td {
-  padding: var(--spacing-3) !important;
+.infobox th {
+  color: var(--color-accent-400) !important;
+  padding: 12px 12px 10px 12px;
+  font-size: 15px;
+  text-align: center;
+  font-weight: bold;
+  background: none !important;
   border-bottom: 1px solid var(--color-border) !important;
-  color: var(--color-text-secondary) !important;
 }
 
-tbody tr:hover {
+.infobox td {
+  padding: 4px 12px;
+  font-size: 13px;
+  line-height: 1.75em;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  background: none !important;
+  border: none !important;
+}
+
+.infobox ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.infobox li {
+  list-style: none;
+  background: url(../images/ui/redbullet.png) no-repeat left 10px;
+  padding-left: 10px;
+  margin: 0;
+  line-height: 1.75em;
+  color: var(--color-text-secondary);
+}
+
+.infobox li div {
+  color: var(--color-text);
+}
+
+.infobox a {
+  color: var(--color-accent-400);
+}
+
+.infobox a:hover {
+  color: var(--color-accent-300);
+}
+
+.infobox-spacer {
+  width: 200px;
+  height: 1px;
+}
+
+/* ============================================
+   TOOLTIPS (WoW-style item/spell tooltips)
+   Preserve original styling - just ensure
+   they render properly on dark backgrounds
+   ============================================ */
+
+.wowhead-tooltip {
+  visibility: visible;
+}
+
+/* Don't interfere with tooltip table structure */
+.wowhead-tooltip table,
+.wowhead-tooltip td,
+.wowhead-tooltip th,
+.wowhead-tooltip tbody {
+  background-color: transparent;
+  border: 0 !important;
+  margin: 0;
+  width: auto;
+  border-radius: 0;
+}
+
+.wowhead-tooltip td,
+.wowhead-tooltip th {
+  padding: inherit;
+}
+
+/* ============================================
+   TABLES - Targeted listview tables only
+   Don't clobber tooltip, infobox, iconlist etc
+   ============================================ */
+
+/* Listview data tables */
+.listview-scroller-horizontal table,
+table.listview-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.listview-scroller-horizontal thead,
+table.listview-table thead {
+  background-color: var(--color-bg-tertiary);
+}
+
+.listview-scroller-horizontal th,
+table.listview-table th {
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text);
+  border-bottom: 2px solid var(--color-border);
+  background-color: var(--color-bg-tertiary);
+  white-space: nowrap;
+}
+
+.listview-scroller-horizontal td,
+table.listview-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--color-border-dark);
+  color: var(--color-text-secondary);
+}
+
+.listview-scroller-horizontal tbody tr:hover,
+table.listview-table tbody tr:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.listview-scroller-horizontal tbody tr:nth-child(even),
+table.listview-table tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Listview chrome */
+.listview-band-top,
+.listview-band-bottom {
   background-color: var(--color-bg-tertiary) !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-text-secondary);
+  border-radius: 6px 6px 0 0;
+  padding: 6px 10px;
 }
 
-tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.1) !important;
+.listview-band-bottom {
+  border-radius: 0 0 6px 6px;
 }
 
-/* Input and form styling */
+.listview-note {
+  color: var(--color-text-muted);
+}
+
+.listview-void {
+  background-color: var(--color-bg-secondary) !important;
+}
+
+/* Sortable header styling */
+a.listview-sort-link,
+a.listview-sort-link:hover {
+  color: var(--color-text) !important;
+  text-decoration: none;
+}
+
+/* Pagination */
+.listview-nav a {
+  color: var(--color-accent-400);
+}
+
+.listview-nav a:hover {
+  color: var(--color-accent-300);
+}
+
+/* ============================================
+   TABS (listview relation tabs)
+   ============================================ */
+
+.tabs-levels {
+  margin-bottom: 0;
+}
+
+.tabs-icon a,
+.tabs-icon span {
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-bottom: none;
+  padding: 4px 12px;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 6px 6px 0 0;
+  margin-right: 2px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.tabs-icon a:hover,
+.tabs-icon a.selected,
+.tabs-icon span.selected {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-accent-400);
+}
+
+/* Generic tab containers */
+.tabbed-contents {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 6px 6px;
+  padding: 15px;
+}
+
+/* ============================================
+   RED BUTTONS (Find Upgrades, Compare, etc.)
+   Keep original image-based styling, just
+   ensure visibility on dark backgrounds
+   ============================================ */
+
+a.button-red {
+  color: #FFD100;
+}
+
+a:hover.button-red {
+  color: white;
+}
+
+/* ============================================
+   FORMS & INPUTS
+   ============================================ */
+
 input[type="text"],
 input[type="search"],
+input[type="password"],
 input[type="number"],
-select,
 textarea {
   background-color: var(--color-bg) !important;
   border: 1px solid var(--color-border) !important;
   color: var(--color-text) !important;
-  padding: var(--spacing-2) var(--spacing-3) !important;
-  border-radius: var(--radius-md) !important;
-  font-family: var(--font-family-base) !important;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 13px;
 }
 
 input[type="text"]:focus,
 input[type="search"]:focus,
+input[type="password"]:focus,
 input[type="number"]:focus,
-select:focus,
 textarea:focus {
-  outline: none !important;
+  outline: none;
   border-color: var(--color-primary-500) !important;
-  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1) !important;
+  box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.15);
 }
 
-/* Button styling */
-button,
-input[type="button"],
-input[type="submit"] {
-  background-color: var(--color-primary-600) !important;
-  color: white !important;
-  border: none !important;
-  padding: var(--spacing-2) var(--spacing-4) !important;
-  border-radius: var(--radius-md) !important;
-  cursor: pointer !important;
-  font-weight: var(--font-weight-medium) !important;
-  transition: all var(--transition-fast) !important;
-}
-
-button:hover,
-input[type="button"]:hover,
-input[type="submit"]:hover {
-  background-color: var(--color-primary-700) !important;
-}
-
-/* List styling */
-ul, ol {
-  color: var(--color-text-secondary) !important;
-  margin: var(--spacing-4) 0 !important;
-  padding-left: var(--spacing-6) !important;
-}
-
-li {
-  margin-bottom: var(--spacing-2) !important;
-  line-height: var(--line-height-relaxed) !important;
-}
-
-/* Infobox styling */
-.infobox {
-  background-color: var(--color-bg-secondary) !important;
-  border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-lg) !important;
-  padding: var(--spacing-6) !important;
-  margin: var(--spacing-6) 0 var(--spacing-6) var(--spacing-6) !important;
-  float: right !important;
-  width: 350px !important;
-  margin-left: var(--spacing-6) !important;
-  clear: right !important;
-}
-
-.infobox h3 {
-  margin-top: 0 !important;
-  color: var(--color-accent-400) !important;
-  font-size: var(--font-size-lg) !important;
-}
-
-/* Fix floated elements */
-.left {
-  float: left !important;
-  clear: left !important;
-  margin-right: var(--spacing-6) !important;
-}
-
-.right {
-  float: right !important;
-  clear: right !important;
-  margin-left: var(--spacing-6) !important;
-}
-
-/* Lvtabs styling */
-.lvTabs {
-  clear: both !important;
-  width: 100% !important;
-  margin-top: var(--spacing-8) !important;
-}
-
-.lvTabs table {
-  width: 100% !important;
-}
-
-/* Contribution box */
-.contribute {
-  clear: both !important;
-  width: 100% !important;
-  margin-top: var(--spacing-8) !important;
-  background-color: var(--color-bg-secondary) !important;
-  border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-lg) !important;
-  padding: var(--spacing-6) !important;
-}
-
-/* Detail Page Modern Layout */
-.detail-page-modern {
-  display: grid !important;
-  grid-template-columns: 1fr 350px !important;
-  gap: var(--spacing-8) !important;
-  margin-top: var(--spacing-8) !important;
-}
-
-.detail-page-main {
-  display: block !important;
-  width: 100% !important;
-}
-
-.detail-page-sidebar {
-  display: block !important;
-  width: 100% !important;
-}
-
-/* Breadcrumb */
-.detail-breadcrumb {
-  display: flex !important;
-  align-items: center !important;
-  gap: var(--spacing-2) !important;
-  margin: var(--spacing-6) 0 !important;
-  padding: var(--spacing-4) 0 !important;
-  border-bottom: 1px solid var(--color-border) !important;
-  font-size: var(--font-size-sm) !important;
-}
-
-.detail-breadcrumb-item {
-  display: flex !important;
-  align-items: center !important;
-}
-
-.detail-breadcrumb-item::after {
-  content: "/" !important;
-  margin: 0 var(--spacing-2) !important;
-  color: var(--color-text-secondary) !important;
-}
-
-.detail-breadcrumb-item:last-child::after {
-  content: "" !important;
-}
-
-.detail-breadcrumb-link {
-  color: var(--color-accent-400) !important;
-  text-decoration: none !important;
-}
-
-.detail-breadcrumb-link:hover {
-  color: var(--color-accent-300) !important;
-  text-decoration: underline !important;
-}
-
-.detail-breadcrumb-current {
-  color: var(--color-text) !important;
-  font-weight: var(--font-weight-medium) !important;
-}
-
-/* Detail Header */
-.detail-header {
-  display: flex !important;
-  gap: var(--spacing-6) !important;
-  margin-bottom: var(--spacing-8) !important;
-  padding: var(--spacing-6) !important;
-  background-color: var(--color-bg-secondary) !important;
-  border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-lg) !important;
-}
-
-.detail-header-icon {
-  width: 100px !important;
-  height: 100px !important;
-  flex-shrink: 0 !important;
+select {
   background-color: var(--color-bg) !important;
   border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-md) !important;
-}
-
-.detail-header-content {
-  flex: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: space-between !important;
-}
-
-.detail-header-title {
-  margin: 0 0 var(--spacing-3) 0 !important;
-  font-size: var(--font-size-3xl) !important;
-  font-weight: var(--font-weight-bold) !important;
   color: var(--color-text) !important;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
-.detail-header-meta {
-  margin-bottom: var(--spacing-4) !important;
-  color: var(--color-text-secondary) !important;
-}
-
-.detail-header-actions {
-  display: flex !important;
-  gap: var(--spacing-3) !important;
-}
-
-/* Detail Sections */
-.detail-section {
-  margin-bottom: var(--spacing-8) !important;
-  padding: var(--spacing-6) !important;
-  background-color: var(--color-bg-secondary) !important;
-  border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-lg) !important;
-}
-
-.detail-section-title {
-  margin: 0 0 var(--spacing-4) 0 !important;
-  font-size: var(--font-size-2xl) !important;
-  font-weight: var(--font-weight-bold) !important;
-  color: var(--color-text) !important;
-  border-bottom: 2px solid var(--color-border) !important;
-  padding-bottom: var(--spacing-3) !important;
-}
-
-.detail-description {
-  color: var(--color-text-secondary) !important;
-  line-height: var(--line-height-relaxed) !important;
-}
-
-.detail-list {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.detail-list-item {
-  padding: var(--spacing-3) 0 !important;
-  border-bottom: 1px solid var(--color-border) !important;
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-}
-
-.detail-list-item:last-child {
-  border-bottom: none !important;
-}
-
-.detail-list-item-label {
-  font-weight: var(--font-weight-medium) !important;
-  color: var(--color-text) !important;
-}
-
-.detail-list-item-value {
-  color: var(--color-accent-400) !important;
-}
-
-/* Sidebar */
-.detail-sidebar-card {
-  margin-bottom: var(--spacing-6) !important;
-  padding: var(--spacing-6) !important;
-  background-color: var(--color-bg-secondary) !important;
-  border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-lg) !important;
-}
-
-.detail-sidebar-card-title {
-  margin: 0 0 var(--spacing-4) 0 !important;
-  font-size: var(--font-size-lg) !important;
-  font-weight: var(--font-weight-bold) !important;
-  color: var(--color-accent-400) !important;
-  border-bottom: 2px solid var(--color-border) !important;
-  padding-bottom: var(--spacing-3) !important;
-}
-
-.detail-sidebar-info {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: var(--spacing-3) !important;
-}
-
-.detail-sidebar-info-item {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  padding: var(--spacing-2) 0 !important;
-}
-
-.detail-sidebar-info-label {
-  font-weight: var(--font-weight-medium) !important;
-  color: var(--color-text) !important;
-}
-
-.detail-sidebar-info-value {
-  color: var(--color-accent-400) !important;
-  font-family: monospace !important;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .detail-page-modern {
-    grid-template-columns: 1fr !important;
-  }
-
-  .detail-page-sidebar {
-    order: -1 !important;
-  }
-}
-
-/* Clear old styling */
-.clear {
-  clear: both !important;
-}
-
-/* Container styling */
-.container {
-  max-width: 1200px !important;
-  margin: 0 auto !important;
-  padding: 0 var(--spacing-4) !important;
-  width: 100% !important;
-}
-
-/* Header styling */
-header {
-  background-color: var(--color-bg-secondary) !important;
-  border-bottom: 1px solid var(--color-border) !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: var(--z-sticky) !important;
-  box-shadow: var(--shadow-sm) !important;
-}
-
-header .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: var(--spacing-3);
-  padding-bottom: var(--spacing-3);
-}
-
-/* Logo */
-.logo {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-accent-400);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-}
-
-.logo:hover {
-  color: var(--color-accent-300);
-}
-
-.logo img {
-  height: 2.5rem;
-  width: auto;
-}
-
-/* Search bar */
-.search-bar {
-  flex: 1;
-  max-width: 400px;
-  margin: 0 var(--spacing-6);
-}
-
-.search-bar input {
-  width: 100%;
-  padding: var(--spacing-2) var(--spacing-4);
-  border-radius: var(--radius-full);
-  border: 1px solid var(--color-border);
-  background-color: var(--color-bg);
+select option {
+  background-color: var(--color-bg-secondary);
   color: var(--color-text);
-  font-size: var(--font-size-sm);
 }
 
-.search-bar input::placeholder {
-  color: var(--color-text-muted);
+/* Filter form buttons */
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  background-color: var(--color-primary-600);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: background-color 150ms ease;
 }
 
-.search-bar input:focus {
-  outline: none;
-  border-color: var(--color-primary-500);
-  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+input[type="submit"]:hover,
+input[type="button"]:hover {
+  background-color: var(--color-primary-700);
 }
 
-/* Navigation */
-nav {
-  display: flex;
-  gap: var(--spacing-4);
-  align-items: center;
+input[type="reset"] {
+  background-color: var(--color-secondary-700);
 }
 
-nav a {
+input[type="reset"]:hover {
+  background-color: var(--color-secondary-600);
+}
+
+/* Checkboxes and labels */
+label {
   color: var(--color-text);
-  text-decoration: none;
-  padding: var(--spacing-2) var(--spacing-3);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  cursor: pointer;
 }
 
-nav a:hover {
+/* ============================================
+   FILTER PANEL
+   ============================================ */
+
+#fi {
   background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+#fi table {
+  width: auto;
+  border: none;
+  background: none;
+  margin: 0;
+  border-radius: 0;
+}
+
+#fi td {
+  border: none;
+  background: none;
+  padding: 3px 5px;
+  color: var(--color-text);
+}
+
+#fi th {
+  border: none;
+  background: none;
+  padding: 3px 5px;
+  color: var(--color-text);
+}
+
+.rightpanel,
+.rightpanel2 {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.rightpanel select,
+.rightpanel2 select {
+  background-color: var(--color-bg) !important;
+}
+
+/* Filter add/remove rows */
+.filter-row {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 6px;
+  margin-bottom: 4px;
+}
+
+/* ============================================
+   CONTRIBUTE SECTION
+   ============================================ */
+
+.tabbed-contents {
+  color: var(--color-text-secondary);
+}
+
+.tabbed-contents a {
   color: var(--color-accent-400);
 }
 
-nav a.active {
-  color: var(--color-accent-400);
-  background-color: rgba(251, 191, 36, 0.1);
+.tabbed-contents ul {
+  list-style: disc;
+  padding-left: 20px;
+  margin: 8px 0;
 }
 
-/* Footer */
+.tabbed-contents li {
+  margin-bottom: 6px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+/* Comment textarea */
+#tab-add-your-comment textarea,
+.comment-textarea {
+  width: 100%;
+  min-height: 120px;
+  background-color: var(--color-bg) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 6px;
+  padding: 10px;
+  color: var(--color-text) !important;
+  font-family: var(--font-family-base);
+  resize: vertical;
+}
+
+/* ============================================
+   PAGINATION & SEARCH RESULTS
+   ============================================ */
+
+.inputbox {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.inputbox h1 {
+  color: var(--color-text);
+  margin-bottom: 12px;
+}
+
+#inputbox-error {
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   ICON LIST (reagents, tools, etc.)
+   ============================================ */
+
+table.iconlist,
+.iconlist {
+  width: auto;
+  border: none;
+  background: none;
+  margin: 4px 0;
+  border-radius: 0;
+}
+
+table.iconlist td,
+table.iconlist th,
+.iconlist td,
+.iconlist th {
+  border: none;
+  background: none;
+  padding: 2px 4px;
+  color: var(--color-text);
+}
+
+/* ============================================
+   WOW QUALITY COLORS (preserve existing)
+   ============================================ */
+
+.q0 { color: #9d9d9d; }
+.q1 { color: #ffffff; }
+.q2 { color: #1eff00; }
+.q3 { color: #0070dd; }
+.q4 { color: #a335ee; }
+.q5 { color: #ff8000; }
+.q6 { color: #e6cc80; }
+.q7 { color: #0070dd; }
+.q10 { color: #ff0040; }
+
+/* ============================================
+   ICON DISPLAY (WoW item/spell icons)
+   Don't break inline icon rendering
+   ============================================ */
+
+.iconsmall,
+.iconmedium,
+.iconlarge,
+.iconblizzard {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Ensure icon images display inline */
+.iconsmall img,
+.iconmedium img,
+.iconlarge img {
+  display: inline;
+  max-width: none;
+}
+
+/* ============================================
+   TOOLTIP SLIDER (level scaling)
+   ============================================ */
+
+.tooltip-slider {
+  margin: 10px 0;
+}
+
+.tooltip-slider table {
+  width: auto;
+  border: none;
+  background: none;
+  margin: 0;
+  border-radius: 0;
+}
+
+.tooltip-slider td {
+  border: none;
+  background: none;
+  padding: 2px;
+}
+
+/* ============================================
+   GRID TABLE (spell details, enchantment details)
+   ============================================ */
+
+table.grid,
+table#spelldetails {
+  border-collapse: collapse;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-base);
+  overflow: hidden;
+  margin-bottom: var(--spacing-4);
+}
+
+table.grid th,
+table#spelldetails th {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text);
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  font-size: var(--font-size-sm);
+}
+
+table.grid td,
+table#spelldetails td {
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Icontab tables (spell effects, item icons) */
+table.icontab {
+  width: auto;
+  border: none;
+  background: none;
+  margin: 4px 0;
+  border-radius: 0;
+}
+
+table.icontab td,
+table.icontab th {
+  border: none;
+  background: none;
+  padding: 2px 4px;
+  color: var(--color-text);
+}
+
+/* ============================================
+   MISC LAYOUT HELPERS
+   ============================================ */
+
+/* Spacing elements - keep as thin spacers */
+.pad  { height: 8px; }
+.pad2 { height: 12px; }
+.pad3 { height: 16px; }
+
+.clear { clear: both; }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-secondary-600);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary-500);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-primary-600);
+  color: white;
+}
+
+/* ============================================
+   FOOTER (modern)
+   ============================================ */
+
 footer {
   background-color: var(--color-bg-secondary);
   border-top: 1px solid var(--color-border);
   margin-top: auto;
-  padding: var(--spacing-8) 0;
-  font-size: var(--font-size-sm);
+  padding: 32px 0;
+  font-size: 14px;
   color: var(--color-text-muted);
 }
 
 footer .container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-8);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px;
 }
 
 footer h3 {
-  font-size: var(--font-size-base);
+  font-size: 15px;
   color: var(--color-text);
-  margin-bottom: var(--spacing-3);
+  margin-bottom: 12px;
+}
+
+footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+footer li {
+  margin-bottom: 6px;
 }
 
 footer a {
   color: var(--color-accent-400);
   text-decoration: none;
-  display: block;
-  margin-bottom: var(--spacing-2);
 }
 
 footer a:hover {
@@ -683,358 +865,180 @@ footer a:hover {
 footer .footer-bottom {
   grid-column: 1 / -1;
   border-top: 1px solid var(--color-border);
-  padding-top: var(--spacing-6);
+  padding-top: 20px;
   text-align: center;
   color: var(--color-text-muted);
 }
 
-/* Main content area */
-main {
-  padding: var(--spacing-8) 0;
+footer .footer-bottom table {
+  width: auto;
+  margin: 10px auto;
+  border: none;
+  background: none;
+  border-radius: 0;
 }
 
-main .container {
-  padding-left: var(--spacing-4);
-  padding-right: var(--spacing-4);
-}
-
-/* Breadcrumbs */
-.breadcrumb {
-  display: flex;
-  gap: var(--spacing-2);
-  margin-bottom: var(--spacing-4);
-  font-size: var(--font-size-sm);
-}
-
-.breadcrumb-item {
-  display: flex;
-  align-items: center;
-}
-
-.breadcrumb-item + .breadcrumb-item::before {
-  content: '/';
-  margin: 0 var(--spacing-2);
+footer .footer-bottom td {
+  border: none;
+  background: none;
+  padding: 2px 8px;
   color: var(--color-text-muted);
 }
 
-.breadcrumb-item a {
-  color: var(--color-accent-400);
-  text-decoration: none;
-}
+/* ============================================
+   HEADER (overrides for modern header in
+   header.tpl.php — see also header.css)
+   ============================================ */
 
-.breadcrumb-item a:hover {
-  text-decoration: underline;
-}
-
-.breadcrumb-item.active {
-  color: var(--color-text-muted);
-}
-
-/* WoW Quality Colors */
-.quality-poor {
-  color: var(--color-quality-poor);
-}
-
-.quality-common {
-  color: var(--color-quality-common);
-}
-
-.quality-uncommon {
-  color: var(--color-quality-uncommon);
-}
-
-.quality-rare {
-  color: var(--color-quality-rare);
-}
-
-.quality-epic {
-  color: var(--color-quality-epic);
-}
-
-.quality-legendary {
-  color: var(--color-quality-legendary);
-}
-
-.quality-artifact {
-  color: var(--color-quality-artifact);
-}
-
-.quality-heirloom {
-  color: var(--color-quality-heirloom);
-}
-
-/* Item/Spell Icons */
-.icon {
-  display: inline-block;
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.icon-sm {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-.icon-lg {
-  width: 3rem;
-  height: 3rem;
-}
-
-.icon-xl {
-  width: 4rem;
-  height: 4rem;
-}
-
-/* Detail Page Layout */
-.detail-page {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: var(--spacing-8);
-}
-
-.detail-page-main {
-  min-width: 0;
-}
-
-.detail-page-sidebar {
+/* Ensure the header bar from header.tpl.php
+   overrides the old .header from aowow.css */
+body > header.header {
+  height: auto;
   position: sticky;
-  top: calc(var(--spacing-16) + 4rem);
-  height: fit-content;
-}
-
-@media (max-width: 1024px) {
-  .detail-page {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-page-sidebar {
-    position: static;
-  }
-}
-
-/* List Page Layout */
-.list-page {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-  gap: var(--spacing-6);
-}
-
-.list-page-filters {
-  position: sticky;
-  top: calc(var(--spacing-16) + 4rem);
-  height: fit-content;
-}
-
-@media (max-width: 768px) {
-  .list-page {
-    grid-template-columns: 1fr;
-  }
-
-  .list-page-filters {
-    position: static;
-  }
-}
-
-/* Item Grid */
-.item-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: var(--spacing-4);
-}
-
-@media (max-width: 768px) {
-  .item-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-}
-
-.item-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-  padding: var(--spacing-3);
+  top: 0;
+  z-index: 1020;
   background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  text-decoration: none;
-  color: var(--color-text);
-  transition: all var(--transition-base);
-}
-
-.item-card:hover {
-  border-color: var(--color-border-light);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-.item-card-icon {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: var(--color-bg-tertiary);
-}
-
-.item-card-name {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-tight);
-}
-
-.item-card-meta {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-}
-
-/* Stat Display */
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  padding: var(--spacing-2) 0;
   border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.stat-row:last-child {
+/* ============================================
+   RANDOM ENCHANTMENTS
+   ============================================ */
+
+.random-enchantments {
+  background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 10px;
+  margin: 8px 0;
+}
+
+.random-enchantments ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.random-enchantments li {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-border-dark);
+  margin: 0;
+}
+
+.random-enchantments li:last-child {
   border-bottom: none;
 }
 
-.stat-label {
-  color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
+/* ============================================
+   SERIES (quest chains, related items)
+   ============================================ */
+
+.series {
+  border: none;
+  background: none;
+  width: auto;
+  border-radius: 0;
+  margin: 0;
 }
 
-.stat-value {
-  color: var(--color-accent-400);
-  font-weight: var(--font-weight-semibold);
-}
-
-/* Comparison Table */
-.comparison-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: var(--spacing-4) 0;
-}
-
-.comparison-table th {
-  background-color: var(--color-bg-tertiary);
-  padding: var(--spacing-3);
-  text-align: left;
-  font-weight: var(--font-weight-semibold);
-  border-bottom: 2px solid var(--color-border);
-}
-
-.comparison-table td {
-  padding: var(--spacing-3);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.comparison-table tbody tr:hover {
-  background-color: var(--color-bg-tertiary);
-}
-
-/* Loading State */
-.loading {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  color: var(--color-text-muted);
-}
-
-.loading::after {
-  content: '';
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid rgba(147, 51, 234, 0.2);
-  border-top-color: var(--color-primary-500);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-/* Empty State */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-12);
-  text-align: center;
-  color: var(--color-text-muted);
-}
-
-.empty-state-icon {
-  font-size: 3rem;
-  margin-bottom: var(--spacing-4);
-  opacity: 0.5;
-}
-
-.empty-state-title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
+.series th,
+.series td {
+  border: none;
+  background: none;
   color: var(--color-text);
-  margin-bottom: var(--spacing-2);
 }
 
-.empty-state-description {
+/* ============================================
+   DIALOG BOXES
+   ============================================ */
+
+div.dialog {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+}
+
+div.dialog .text {
   color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-4);
 }
 
-/* Skip to main content link */
-.skip-to-main {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--color-primary-600);
-  color: white;
-  padding: var(--spacing-2) var(--spacing-4);
-  text-decoration: none;
-  z-index: var(--z-fixed);
+/* ============================================
+   COMMENTS
+   ============================================ */
+
+.comment {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  padding: 12px;
 }
 
-.skip-to-main:focus {
-  top: 0;
+.comment-header {
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
 }
 
-/* Accessibility focus indicator */
-:focus-visible {
-  outline: 2px solid var(--color-primary-500);
-  outline-offset: 2px;
+.comment-body {
+  color: var(--color-text-secondary);
 }
 
-/* Smooth scrolling for anchor links */
-html {
-  scroll-behavior: smooth;
+.comment-rating {
+  color: var(--color-text-muted);
 }
 
-/* Print styles */
+/* ============================================
+   NOSCRIPT OVERLAY
+   ============================================ */
+
+#noscript-bg {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+#noscript-text {
+  color: var(--color-text);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .infobox {
+    float: none;
+    width: 100% !important;
+    margin: 0 0 15px 0;
+  }
+
+  .main-contents {
+    padding: 12px;
+  }
+
+  .container {
+    padding: 0 12px;
+  }
+}
+
+/* ============================================
+   PRINT
+   ============================================ */
+
 @media print {
   header,
   footer,
-  .no-print,
-  .sidebar {
+  .infobox {
     display: none !important;
   }
 
   body {
     background-color: white;
-    color: black;
-  }
-
-  .detail-page,
-  .list-page {
-    grid-template-columns: 1fr;
-  }
-
-  a {
     color: black;
   }
 }

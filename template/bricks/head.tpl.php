@@ -25,10 +25,12 @@ if ($this->gDataKey):
 endif;
 ?>
     </script>
-    <!-- Load old JavaScript files first -->
-    <script type="text/javascript" src="<?=Cfg::get('STATIC_URL'); ?>/js/jquery-3.7.0.min.js"></script>
-    <script type="text/javascript" src="<?=Cfg::get('STATIC_URL'); ?>/js/global.js"></script>
-    <script type="text/javascript" src="<?=Cfg::get('STATIC_URL'); ?>/js/basic.js"></script>
+
+    <!-- WebGL 3D Model Viewer (must load before page scripts that use WoWModelViewer) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="<?=Cfg::get('STATIC_URL'); ?>/js/webgl-viewer.js?<?=time(); ?>"></script>
+
 <?php
 foreach ($this->js as [$type, $js]):
     if ($type == SC_JS_FILE):
@@ -46,10 +48,6 @@ if ($this->gFavorites):
 endif;
 ?>
     </script>
-
-    <!-- WebGL 3D Model Viewer -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="<?=Cfg::get('STATIC_URL'); ?>/js/webgl-viewer.js"></script>
 
 <?php
 if (Cfg::get('ANALYTICS_USER')):

@@ -30,7 +30,7 @@ class SearchPage extends GenericPage
     protected $tpl           = 'search';
     protected $tabId         = 0;
     protected $mode          = CACHE_TYPE_SEARCH;
-    protected $scripts       = [[SC_JS_FILE, 'js/swfobject.js']];
+    protected $scripts       = [];
     protected $lvTabs        = [];                          // [file, data, extraInclude, osInfo]       // osInfo:[type, appendix, nMatches, param1, param2]
     protected $forceTabs     = true;
     protected $search        = '';                          // output

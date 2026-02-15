@@ -593,6 +593,7 @@ class User
         $gUser['upvoteRep']         = Cfg::get('REP_REQ_UPVOTE');
         $gUser['characters']        = self::getCharacters();
         $gUser['excludegroups']     = self::$excludeGroups;
+        $gUser['premium']           = self::isPremium();
         $gUser['settings']          = (new StdClass);       // profiler requires this to be set
         // Premium border setting - allows premium users to display special avatar borders
         // $gUser['settings']->premiumborder = self::getProfilerPremiumBorder();  // TODO: Implement premium border retrieval

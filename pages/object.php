@@ -19,7 +19,7 @@ class ObjectPage extends GenericPage
     protected $path          = [0, 5];
     protected $tabId         = 0;
     protected $mode          = CACHE_TYPE_PAGE;
-    protected $scripts       = [[SC_JS_FILE, 'js/swfobject.js']];
+    protected $scripts       = [];
 
     protected $_get          = ['domain' => ['filter' => FILTER_CALLBACK, 'options' => 'Locale::tryFromDomain']];
 

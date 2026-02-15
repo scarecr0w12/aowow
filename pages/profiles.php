@@ -85,6 +85,8 @@ class ProfilesPage extends GenericPage
             $conditions[] = [['extra_flags', Profiler::CHAR_GMFLAGS, '&'], 0];
         }
 
+        $conditions[] = Cfg::get('SQL_LIMIT_NONE');
+
         // recreate form selection
         $this->filter             = $this->filterObj->getForm();
         $this->filter['query']    = $this->_get['filter'];

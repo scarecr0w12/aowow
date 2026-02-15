@@ -218,25 +218,4 @@
   --container-max: 1400px;
 }
 
-/* Dark mode (default) - already set above */
-@media (prefers-color-scheme: light) {
-  :root {
-    --color-text: #1e293b;
-    --color-text-secondary: #475569;
-    --color-text-muted: #64748b;
-    --color-text-disabled: #94a3b8;
-    --color-text-inverse: #e2e8f0;
-
-    --color-bg: #ffffff;
-    --color-bg-secondary: #f8fafc;
-    --color-bg-tertiary: #f1f5f9;
-    --color-bg-hover: #f1f5f9;
-    --color-bg-active: #e2e8f0;
-
-    --color-border: #e2e8f0;
-    --color-border-light: #cbd5e1;
-    --color-border-dark: #f1f5f9;
-
-    --color-shadow: rgba(0, 0, 0, 0.1);
-  }
-}
+/* Always use dark mode */

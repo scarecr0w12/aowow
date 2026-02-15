@@ -1,8 +1,9 @@
 <?php $this->brick('header'); ?>
 
-    <div class="main" id="main">
-        <div class="main-precontents" id="main-precontents"></div>
-        <div class="main-contents" id="main-contents">
+    <div id="main-precontents" class="detail-breadcrumb-bar"></div>
+
+    <div class="detail-grid" id="main">
+        <div class="detail-grid-main detail-content-card" id="main-contents">
 
 <?php
 $this->brick('announcement');
@@ -304,7 +305,7 @@ endif;
 </div>
 <script>$WH.AdjacentPreview.init()</script>
 <!-- end insert -->
-        </div><!-- main-contents -->
-    </div><!-- main -->
+        </div><!-- detail-grid-main -->
+    </div><!-- detail-grid -->
 
 <?php $this->brick('footer'); ?>

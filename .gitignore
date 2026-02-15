@@ -8,16 +8,37 @@ config/config.php
 *.key
 *.pem
 
+# IDE and workspace
+.vscode/
+.windsurf/
+.augment/
+
+# Development documentation (session notes)
+/*_ANALYSIS.md
+/*_COMPLETE.md
+/*_COMPLETION_SUMMARY.md
+/*_DEPLOYMENT_COMPLETE.md
+/*_FIX.md
+/*_GUIDE.md
+/*_INTEGRATION_GUIDE.md
+/*_PLAN.md
+/*_QUICKSTART.md
+/*_REVIEW.md
+/*_STRATEGY.md
+/*_SUMMARY.md
+/*_TESTING_GUIDE.md
+/AUDIT_SUMMARY.md
+/TODO.md
+test-*.html
+
 # cache
-/cache/template/*
-/cache/alphaMaps/*
-/cache/setup/*
+/cache/*
+!/cache/.gitkeep
 
 # extract from MPQ
 /setup/mpqdata/*
 /setup/tools/
 /setup/dbc/
-
 
 # generated files
 /static/js/profile_all.js
@@ -29,6 +50,8 @@ config/config.php
 /static/widgets/searchbox/searchbox.html
 /static/download/searchplugins/aowow.xml
 /static/models/
+/static/data/*
+!/static/data/.gitkeep
 /datasets/*
 !/datasets/zones
 # /datasets/item-scaling

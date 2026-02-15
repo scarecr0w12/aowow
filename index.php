@@ -76,6 +76,7 @@ switch ($pageCall)
     case 'races':
     case 'screenshot':                                      // prepare uploaded screenshots
     case 'search':                                          // tool: searches
+    case 'signature':                                       // character signature image generator
     case 'skill':
     case 'skills':
     case 'sound':

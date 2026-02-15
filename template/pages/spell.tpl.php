@@ -1,20 +1,17 @@
-<?php $this->brick('modern-header'); ?>
+<?php $this->brick('header'); ?>
 
-    <main>
-        <div class="container">
-            <div class="main" id="main">
-                <div class="main-precontents" id="main-precontents"></div>
-                <div class="main-contents" id="main-contents">
+    <div id="main-precontents" class="detail-breadcrumb-bar"></div>
 
-<?php
-    $this->brick('announcement');
+<?php $this->brick('announcement'); ?>
+<?php $this->brick('pageTemplate'); ?>
 
-    $this->brick('pageTemplate');
-?>
-
+    <div class="detail-grid" id="main">
+        <!-- Main Content -->
+        <div class="detail-grid-main detail-content-card" id="main-contents">
             <div class="text">
-
+                <div class="detail-actions-bar">
 <?php $this->brick('redButtons'); ?>
+                </div>
 
                 <h1 class="h1-icon"><?=$this->name; ?></h1>
 
@@ -295,20 +292,17 @@ endforeach;
                 <h2 class="clear"><?=Lang::main('related');?></h2>
             </div>
 
-<?php
-$this->brick('lvTabs', ['relTabs' => true]);
+<?php $this->brick('lvTabs', ['relTabs' => true]); ?>
 
-$this->brick('contribute');
-?>
+<?php $this->brick('contribute'); ?>
+
             <div class="clear"></div>
-                </div><!-- main-contents -->
+        </div><!-- detail-grid-main -->
 
-<?php
-    $this->brick('infobox');
-?>
+        <!-- Sidebar -->
+        <aside class="detail-grid-sidebar">
+<?php $this->brick('infobox'); ?>
+        </aside>
+    </div><!-- detail-grid -->
 
-            </div><!-- main -->
-        </div>
-    </main>
-
-<?php $this->brick('modern-footer'); ?>
+<?php $this->brick('footer'); ?>

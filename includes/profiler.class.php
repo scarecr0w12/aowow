@@ -7,7 +7,7 @@ if (!defined('AOWOW_REVISION'))
 class Profiler
 {
     public const PID_FILE     = __DIR__ . '/../config/pr-queue-pid';
-    public const CHAR_GMFLAGS = 0x1 | 0x8 | 0x10 | 0x20;    // PLAYER_EXTRA_ :: GM_ON | TAXICHEAT | GM_INVISIBLE | GM_CHAT
+    public const CHAR_GMFLAGS = 0x1 | 0x10 | 0x20;            // PLAYER_EXTRA_ :: GM_ON | GM_INVISIBLE | GM_CHAT
 
     public const REGIONS = array(                           // see cfg_categories.dbc
         'us' => [2, 3, 4, 5],                               // US (us, oceanic, latin america, americas - tournament)

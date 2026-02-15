@@ -3,15 +3,17 @@ $this->brick('header');
 $f = $this->filter;                                         // shorthand
 ?>
 
-    <div class="main" id="main">
-        <div class="main-precontents" id="main-precontents"></div>
-        <div class="main-contents" id="main-contents">
+    <div id="main-precontents" class="detail-breadcrumb-bar"></div>
 
 <?php
 $this->brick('announcement');
 
 $this->brick('pageTemplate', ['fi' => empty($f['query']) ? null : ['query' => $f['query'], 'menuItem' => 1]]);
 ?>
+
+    <div class="detail-grid" id="main">
+        <!-- Main Content -->
+        <div class="detail-grid-main detail-content-card" id="main-contents">
 
             <div id="fi" style="display: <?=(empty($f['query']) ? 'none' : 'block'); ?>;">
                 <form action="?filter=spells<?=$this->subCat; ?>" method="post" name="fi" onsubmit="return fi_submit(this)" onreset="return fi_reset(this)">
@@ -149,7 +151,7 @@ endforeach;
 <?php $this->brick('lvTabs'); ?>
 
             <div class="clear"></div>
-        </div><!-- main-contents -->
-    </div><!-- main -->
+        </div><!-- detail-grid-main -->
+    </div><!-- detail-grid -->
 
 <?php $this->brick('footer'); ?>

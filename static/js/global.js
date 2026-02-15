@@ -20758,30 +20758,48 @@ var ModelViewer = new function() {
     }
 
     function render() {
-        var flashVars = {
-            model: model,
-            modelType: modelType,
-            // contentPath: 'http://static.wowhead.com/modelviewer/'
-            contentPath: g_staticUrl + '/modelviewer/'
-        };
+        /* ---- WebGL rendering (replaces Flash swfobject.embedSWF) ---- */
+        var viewerEl = $WH.ge('modelviewer-generic');
+        if (viewerEl && typeof WoWModelViewer !== 'undefined') {
+            // Clear old content
+            viewerEl.innerHTML = '';
+            viewerEl.style.width  = '600px';
+            viewerEl.style.height = '400px';
 
-        var params = {
-            quality: 'high',
-            allowscriptaccess: 'always',
-            allowfullscreen: true,
-            menu: false,
-            bgcolor: '#181818',
-            wmode: 'direct'
-        };
+            // Dispose old viewer instance
+            if (window._mvWebGLViewer) {
+                window._mvWebGLViewer.dispose();
+            }
 
-        var attributes = { };
+            window._mvWebGLViewer = new WoWModelViewer(viewerEl);
 
-        if (modelType == 16 && equipList.length) {
-            flashVars.equipList = equipList.join(',');
+            var type = optBak.type;
+            var displayId = model;
+
+            if (type === 16) {
+                // Character model
+                window._mvWebGLViewer.loadByDisplayId(16, 0, {
+                    race: getRaceSex().r || 1,
+                    sex:  getRaceSex().s || 0
+                });
+            } else if (type === 4 && equipList && equipList.length) {
+                // Item set - load first item
+                var firstDisplayId = equipList.length >= 2 ? equipList[1] : equipList[0];
+                window._mvWebGLViewer.loadByDisplayId(3, firstDisplayId, { slot: equipList[0] || 0 });
+            } else if (type === 3) {
+                // Single item
+                window._mvWebGLViewer.loadByDisplayId(3, displayId, { slot: optBak.slot || 0 });
+            } else if (type === 1) {
+                // NPC
+                window._mvWebGLViewer.loadByDisplayId(1, displayId, {});
+            } else if (type === 2) {
+                // Object
+                window._mvWebGLViewer.loadByDisplayId(2, displayId, {});
+            } else {
+                // Fallback
+                window._mvWebGLViewer.loadByDisplayId(type || 1, displayId || 0, {});
+            }
         }
-
-        // swfobject.embedSWF('http://static.wowhead.com/modelviewer/ZAMviewerfp11.swf', 'modelviewer-generic', '600', '400', "11.0.0", 'http://static.wowhead.com/modelviewer/expressInstall.swf', flashVars, params, attributes);
-        swfobject.embedSWF(g_staticUrl + '/modelviewer/ZAMviewerfp11.swf', 'modelviewer-generic', '600', '400', "11.0.0", g_staticUrl + '/modelviewer/expressInstall.swf', flashVars, params, attributes);
 
         var
             foo  = getRaceSex(),
@@ -20869,47 +20887,33 @@ var ModelViewer = new function() {
     }
 
     function onAnimationChange() {
-        var viewer = $('#modelviewer-generic');
-        if (viewer.length == 0)
-            return;
-        viewer = viewer[0];
+        if (!window._mvWebGLViewer) return;
 
         var animList = $('select', animDiv);
-        if (animList.val() && viewer.isLoaded && viewer.isLoaded())
-            viewer.setAnimation(animList.val());
+        if (animList.val()) {
+            window._mvWebGLViewer.setAnimation(animList.val());
+        }
     }
 
     function onAnimationMouseover() {
         if (animsLoaded)
             return;
 
-        var viewer = $('#modelviewer-generic');
-        if (viewer.length == 0)
-            return;
-        viewer = viewer[0];
+        if (!window._mvWebGLViewer) return;
 
         var animList = $('select', animDiv);
         animList.empty();
-        if (!viewer.isLoaded || !viewer.isLoaded()) {
+
+        var names = window._mvWebGLViewer.getAnimationNames();
+        if (!names || !names.length) {
             animList.append($('<option/>', { text: LANG.tooltip_loading, val: 0 }));
             return;
         }
 
-        var anims = {};
-        var numAnims = viewer.getNumAnimations();
-        for(var i = 0; i < numAnims; ++i) {
-            var a = viewer.getAnimation(i);
-            if(a && a != 'EmoteUseStanding')
-                anims[a] = 1;
+        names.sort();
+        for (var i = 0; i < names.length; ++i) {
+            animList.append($('<option/>', { text: names[i], val: names[i] }));
         }
-
-        var animArray = [];
-        for (var a in anims)
-            animArray.push(a);
-        animArray.sort();
-
-        for (var i = 0; i < animArray.length; ++i)
-            animList.append($('<option/>', { text: animArray[i], val: animArray[i] }));
 
         animsLoaded = true;
     }

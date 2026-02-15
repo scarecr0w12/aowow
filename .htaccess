@@ -1,9 +1,8 @@
-Order Deny,Allow
-<FilesMatch "\.(conf|php|in)$">
+Order Allow,Deny
+Allow from all
+
+<FilesMatch "\.(conf|in)$">
     Deny from all
-</FilesMatch>
-<FilesMatch "^(index)\.php$">
-    Allow from all
 </FilesMatch>
 
 <Files "aowow">
@@ -37,6 +36,8 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/static/
 RewriteCond %{REQUEST_URI} !^/cache/
+
+RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Mapper-Helper: If you cant provide maps for all locales, redirect the browser
 # RewriteRule ^(.*/?)static/images/wow/maps/(frfr|dede|eses|ruru)/(.*)$ $1static/images/wow/maps/enus/$3 [NC]

@@ -1,105 +1,96 @@
-<?php $this->brick('modern-header'); ?>
+<?php $this->brick('header'); ?>
 
-    <main>
-        <div class="container">
-            <div class="main" id="main">
-                <div class="main-precontents" id="main-precontents"></div>
-                <div class="main-contents" id="main-contents">
+    <div id="main-precontents" class="detail-breadcrumb-bar"></div>
 
-<?php
-    $this->brick('announcement');
+<?php $this->brick('announcement'); ?>
+<?php $this->brick('pageTemplate'); ?>
 
-    $this->brick('pageTemplate');
-?>
-
+    <div class="detail-grid" id="main">
+        <!-- Main Content -->
+        <div class="detail-grid-main detail-content-card" id="main-contents">
             <div class="text">
+                <div class="detail-actions-bar">
 <?php $this->brick('redButtons'); ?>
+                </div>
 
                 <h1><?=$this->name; ?></h1>
-<?php
-if ($this->unavailable):
-?>
-	<div class="pad"></div>
-    <b style="color: red"><?=Lang::item('_unavailable'); ?></b>
-	<div class="pad"></div>
-<?php
-endif;
 
-    $this->brick('tooltip');
+<?php if ($this->unavailable): ?>
+                <div class="detail-alert-warning">
+                    <?=Lang::item('_unavailable'); ?>
+                </div>
+<?php endif; ?>
 
-    $this->brick('article');
+                <div class="detail-tooltip-section">
+<?php $this->brick('tooltip'); ?>
+                </div>
 
-if (!empty($this->transfer)):
-    echo "    <div class=\"pad\"></div>\n    ".$this->transfer."\n";
-endif;
+<?php $this->brick('article'); ?>
 
-if (!empty($this->subItems)):
-?>
-                <div class="clear"></div>
-                <h3><?=Lang::item('_rndEnchants'); ?></h3>
+<?php if (!empty($this->transfer)): ?>
+                <div class="detail-section">
+                    <?=$this->transfer; ?>
+                </div>
+<?php endif; ?>
 
-                <div class="random-enchantments" style="margin-right: 25px">
-                    <ul>
+<?php if (!empty($this->subItems)): ?>
+                <div class="detail-section">
+                    <h3><?=Lang::item('_rndEnchants'); ?></h3>
+                    <div class="random-enchantments">
+                        <ul>
 <?php
         foreach ($this->subItems['data'] as $k => $i):
             if ($k < (count($this->subItems['data']) / 2)):
                 $eText = [];
                 foreach ($i['enchantment'] as $eId => $txt):
-                    $eText[] = '<a style="text-decoration:none; color:#CCCCCC;" href="?enchantment='.$eId.'">'.$txt.'</a>';
+                    $eText[] = '<a href="?enchantment='.$eId.'">'.$txt.'</a>';
                 endforeach;
 
-                echo '                        <li><div><span title="ID'.Lang::main('colon').$this->subItems['randIds'][$k].'" class="tip q'.$this->subItems['quality'].'">...'.$i['name'].'</span>';
-                echo '                        <small class="q0">'.sprintf(Lang::item('_chance'), $i['chance']).'</small><br />'.implode(', ', $eText).'</div></li>';
+                echo '                            <li><div><span title="ID'.Lang::main('colon').$this->subItems['randIds'][$k].'" class="tip q'.$this->subItems['quality'].'">...'.$i['name'].'</span>';
+                echo ' <small class="q0">'.sprintf(Lang::item('_chance'), $i['chance']).'</small><br />'.implode(', ', $eText).'</div></li>'."\n";
             endif;
         endforeach;
 ?>
-                    </ul>
-                </div>
-<?php
-    if (count($this->subItems) > 1):
-?>
-                <div class="random-enchantments" style="margin-right: 25px">
-                    <ul>
+                        </ul>
+                    </div>
+<?php if (count($this->subItems) > 1): ?>
+                    <div class="random-enchantments">
+                        <ul>
 <?php
         foreach ($this->subItems['data'] as $k => $i):
             if ($k >= (count($this->subItems['data']) / 2)):
                 $eText = [];
                 foreach ($i['enchantment'] as $eId => $txt):
-                    $eText[] = '<a style="text-decoration:none; color:#CCCCCC;" href="?enchantment='.$eId.'">'.$txt.'</a>';
+                    $eText[] = '<a href="?enchantment='.$eId.'">'.$txt.'</a>';
                 endforeach;
 
-                echo '                        <li><div><span title="ID'.Lang::main('colon').$this->subItems['randIds'][$k].'" class="tip q'.$this->subItems['quality'].'">...'.$i['name'].'</span>';
-                echo '                        <small class="q0">'.sprintf(Lang::item('_chance'), $i['chance']).'</small><br />'.implode(', ', $eText).'</div></li>';
+                echo '                            <li><div><span title="ID'.Lang::main('colon').$this->subItems['randIds'][$k].'" class="tip q'.$this->subItems['quality'].'">...'.$i['name'].'</span>';
+                echo ' <small class="q0">'.sprintf(Lang::item('_chance'), $i['chance']).'</small><br />'.implode(', ', $eText).'</div></li>'."\n";
             endif;
         endforeach;
 ?>
-                    </ul>
+                        </ul>
+                    </div>
+<?php endif; ?>
                 </div>
-<?php
-    endif;
-endif;
+<?php endif; ?>
 
-$this->brick('book');
-?>
+<?php $this->brick('book'); ?>
 
                 <h2 class="clear"><?=Lang::main('related'); ?></h2>
             </div>
 
-<?php
-    $this->brick('lvTabs', ['relTabs' => true]);
+<?php $this->brick('lvTabs', ['relTabs' => true]); ?>
 
-    $this->brick('contribute');
-?>
+<?php $this->brick('contribute'); ?>
 
             <div class="clear"></div>
-                </div><!-- main-contents -->
+        </div><!-- detail-grid-main -->
 
-<?php
-    $this->brick('infobox');
-?>
+        <!-- Sidebar -->
+        <aside class="detail-grid-sidebar">
+<?php $this->brick('infobox'); ?>
+        </aside>
+    </div><!-- detail-grid -->
 
-            </div><!-- main -->
-        </div>
-    </main>
-
-<?php $this->brick('modern-footer'); ?>
+<?php $this->brick('footer'); ?>

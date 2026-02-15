@@ -1,16 +1,15 @@
-<?php $this->brick('modern-header'); ?>
+<?php $this->brick('header'); ?>
 
-    <main>
-        <div class="container">
-    <div class="main" id="main">
-        <div class="main-precontents" id="main-precontents"></div>
-        <div class="main-contents" id="main-contents">
+    <div id="main-precontents" class="detail-breadcrumb-bar"></div>
+
+<?php $this->brick('announcement'); ?>
+<?php $this->brick('pageTemplate'); ?>
+
+    <div class="detail-grid" id="main">
+        <!-- Main Content -->
+        <div class="detail-grid-main detail-content-card" id="main-contents">
 
 <?php
-    $this->brick('announcement');
-
-    $this->brick('pageTemplate');
-
     if ($this->notFound):
 ?>
             <div class="pad3"></div>
@@ -70,12 +69,7 @@
 <?php
     endif;
 ?>
-        </div><!-- main-contents -->
-    </div><!-- main -->
-        </div>
-    </main>
+        </div><!-- detail-grid-main -->
+    </div><!-- detail-grid -->
 
-<?php $this->brick('modern-footer'); ?>
-
-<script src="<?=Cfg::get('STATIC_URL'); ?>/js/modern-ui.js"></script>
-<script src="<?=Cfg::get('STATIC_URL'); ?>/js/performance.js"></script>
+<?php $this->brick('footer'); ?>

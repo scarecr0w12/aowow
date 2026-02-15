@@ -438,6 +438,11 @@ a.profiler-header-editlink {
     left: 119px;
 }
 
+.profiler-inventory-left .iconmedium,
+.profiler-inventory-right .iconmedium {
+    display: block;
+}
+
 .profiler-inventory-bottom .iconmedium {
     float: left;
 }

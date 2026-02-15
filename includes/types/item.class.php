@@ -317,8 +317,8 @@ class ItemList extends BaseType
             foreach ($this->json[$this->id] as $k => $v)
                 $data[$this->id][$k] = $v;
 
-            // json vs listview quirk
-            $data[$this->id]['name'] = $data[$this->id]['quality'].Lang::unescapeUISequences($this->getField('name', true), Lang::FMT_RAW);
+            // json vs listview quirk: quality is encoded as (7 - quality) in name prefix, JS decodes with 7 - parseInt(name.charAt(0))
+            $data[$this->id]['name'] = (7 - $data[$this->id]['quality']).Lang::unescapeUISequences($this->getField('name', true), Lang::FMT_RAW);
             unset($data[$this->id]['quality']);
 
             if (!empty($this->relEnchant) && $this->curTpl['randomEnchant'])

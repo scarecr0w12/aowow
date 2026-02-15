@@ -184,6 +184,112 @@
   background-color: rgba(251, 191, 36, 0.1);
 }
 
+/* Navigation Dropdowns */
+.header-nav-dropdown {
+  position: relative;
+}
+
+.header-nav-link-has-dropdown::after {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 4px;
+  vertical-align: middle;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid currentColor;
+  opacity: 0.6;
+  transition: transform 0.15s ease;
+}
+
+.header-nav-dropdown:hover .header-nav-link-has-dropdown::after {
+  transform: rotate(180deg);
+}
+
+.header-nav-dropdown-menu {
+  position: absolute !important;
+  top: 100% !important;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,.4), 0 4px 6px -4px rgba(0,0,0,.3);
+  min-width: 200px;
+  margin-top: 4px;
+  padding: 8px 0;
+  display: none !important;
+  z-index: 9999;
+  overflow: visible;
+}
+
+.header-nav-dropdown:hover > .header-nav-dropdown-menu {
+  display: block !important;
+}
+
+/* Invisible bridge so mouse can travel from link to dropdown */
+.header-nav-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+}
+
+/* Mega menu (multi-column for Database) */
+.header-nav-dropdown-mega {
+  display: none !important;
+  flex-wrap: wrap;
+  min-width: 520px;
+  padding: 16px;
+  gap: 16px;
+  overflow: visible;
+}
+
+.header-nav-dropdown:hover > .header-nav-dropdown-mega {
+  display: flex !important;
+}
+
+.header-nav-dropdown-column {
+  flex: 1;
+  min-width: 120px;
+}
+
+.header-nav-dropdown-heading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fbbf24;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #334155;
+}
+
+.header-nav-dropdown-item {
+  display: block;
+  padding: 4px 8px;
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.header-nav-dropdown-item:hover {
+  background-color: #334155;
+  color: #fbbf24;
+}
+
+.header-nav-dropdown-divider {
+  height: 1px;
+  background-color: #334155;
+  margin: 4px 8px;
+}
+
 /* User Menu */
 .header-user {
   display: flex;
@@ -381,6 +487,11 @@
 
   .header-nav {
     display: none;
+  }
+
+  .header-nav-dropdown-menu,
+  .header-nav-dropdown-mega {
+    display: none !important;
   }
 
   .header-mobile-toggle {

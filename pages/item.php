@@ -23,7 +23,6 @@ class ItemPage extends GenericPage
     protected $mode          = CACHE_TYPE_PAGE;
     protected $enhancedTT    = [];
     protected $scripts       = array(
-        [SC_JS_FILE, 'js/swfobject.js'],
         [SC_JS_FILE, 'js/profile.js'],
         [SC_JS_FILE, 'js/filters.js']
     );

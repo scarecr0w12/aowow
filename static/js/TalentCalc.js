@@ -2739,35 +2739,21 @@ function TalentCalc() {
             c.npcId = models[Math.floor(Math.random() * models.length)];
         }
 
-        var flashVars = {
-            model: g_pets[c.npcId].displayId,
-            modelType: 8,
-            contentPath: swfUrl + '/modelviewer/',
-            blur: ($WH.OS.mac ? '0' : '1')
-        };
+        /* ---- WebGL pet model viewer (replaces Flash SWF) ---- */
+        if (typeof WoWModelViewer === 'undefined') return;
+        var modelEl = $WH.ge(_swfModel.id);
+        if (modelEl) {
+            modelEl.innerHTML = '';
+            modelEl.style.width  = '100%';
+            modelEl.style.height = '100%';
 
-        var params = {
-            quality: 'high',
-            allowscriptaccess: 'always',
-            allowfullscreen: true,
-            menu: false,
-            bgcolor: '#181818',
-            wmode: 'direct'
-        };
+            if (window._tcWebGLViewer) {
+                window._tcWebGLViewer.dispose();
+            }
 
-        var attributes = {};
-
-        swfobject.embedSWF(
-            swfUrl + '/modelviewer/ZAMviewerfp11.swf',
-            _swfModel.id,
-            '100%',
-            '100%',
-            '10.0.0',
-            swfUrl + '/modelviewer/expressInstall.swf',
-            flashVars,
-            params,
-            attributes
-        );
+            window._tcWebGLViewer = new WoWModelViewer(modelEl);
+            window._tcWebGLViewer.loadByDisplayId(8, g_pets[c.npcId].displayId, {});
+        }
     }
 }
 

@@ -1,19 +1,17 @@
 <?php $this->brick('header'); ?>
 
-    <div class="main" id="main">
-        <div class="main-precontents" id="main-precontents"></div>
-        <div class="main-contents" id="main-contents">
+    <div id="main-precontents" class="detail-breadcrumb-bar"></div>
 
-<?php
-    $this->brick('announcement');
+<?php $this->brick('announcement'); ?>
+<?php $this->brick('pageTemplate'); ?>
 
-    $this->brick('pageTemplate');
-?>
-
+    <div class="detail-grid" id="main">
+        <!-- Main Content -->
+        <div class="detail-grid-main detail-content-card" id="main-contents">
             <div class="text">
-<?php
-    $this->brick('redButtons');
-?>
+                <div class="detail-actions-bar">
+<?php $this->brick('redButtons'); ?>
+                </div>
 
                 <h1><?=$this->name; ?></h1>
 
@@ -140,7 +138,11 @@ g_audioplaylist.setAudioControls($WH.ge('playlistcontrols'));
 ?>
 
             <div class="clear"></div>
-        </div><!-- main-contents -->
-    </div><!-- main -->
+        </div><!-- detail-grid-main -->
+
+        <!-- Sidebar -->
+        <aside class="detail-grid-sidebar">
+        </aside>
+    </div><!-- detail-grid -->
 
 <?php $this->brick('footer'); ?>

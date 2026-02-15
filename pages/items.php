@@ -18,7 +18,7 @@ class ItemsPage extends GenericPage
     protected $path          = [0, 0];
     protected $tabId         = 0;
     protected $mode          = CACHE_TYPE_PAGE;
-    protected $scripts       = [[SC_JS_FILE, 'js/filters.js'], [SC_JS_FILE, 'js/swfobject.js']];
+    protected $scripts       = [[SC_JS_FILE, 'js/filters.js']];
 
     protected $_get          = ['filter' => ['filter' => FILTER_UNSAFE_RAW]];
 
